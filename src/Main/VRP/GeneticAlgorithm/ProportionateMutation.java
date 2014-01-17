@@ -61,9 +61,9 @@ public class ProportionateMutation
 	//	System.out.println("% "+ percentage+" period " + periodCount + " perm : " + permutationCount+" rout : "+routeCount);		
 
 
-		for(int i =0 ;i<periodCount;i++)
-			offspring.mutatePeriodAssignment();
-		for(int i=0;i<permutationCount;i++)
+		//for(int i =0 ;i<periodCount;i++)
+		//	offspring.mutatePeriodAssignment();
+		//for(int i=0;i<permutationCount;i++)
 			//offspring.mutatePermutation();
 		//for(int i=0;i<routeCount;i++)
 			//offspring.mutateRoutePartition();

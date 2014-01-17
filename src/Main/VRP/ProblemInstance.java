@@ -15,7 +15,12 @@ public class ProblemInstance
 	public ArrayList<ArrayList<Integer>> vehiclesUnderThisDepot;
 	public double costMatrix[][];
 	public double travellingTimeMatrix[][];
-	public int depotAllocation[]; // kon vehicle kon depot er under a
+	
+	/**
+	 * kon vehicle kon depot er under a
+	 */
+	public int depotAllocation[]; 
+	
 	public double loadCapacity[]; // kon vehicle max koto load nite parbe
 	public double serviceTime[];  // kon client kototuk time lage service pete
 	/**

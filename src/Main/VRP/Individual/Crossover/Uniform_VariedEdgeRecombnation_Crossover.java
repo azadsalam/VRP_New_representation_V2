@@ -69,7 +69,7 @@ public class Uniform_VariedEdgeRecombnation_Crossover
 			assignClientToVehicle(child,parent1,parent2,assignedVehicle, numberOfCustomerServed,period);
 			createAdjacencyList(adjacencyList, vehicleAdjacencyList, period, assignedVehicle,child,parent1,parent2);
 			
-			boolean print=true;	
+			boolean print=false;	
 			if(print)
 			{
 				problemInstance.out.println("Vehicle assignment : period : "+period);

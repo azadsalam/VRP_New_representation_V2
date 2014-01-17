@@ -5,7 +5,8 @@ import Main.VRP.ProblemInstance;
 
 
 
-public class RouteUtilities {
+public class RouteUtilities 
+{
 	
 	/**
 	 * Checks if the client is present in any route or not,  for the specified period
@@ -46,6 +47,70 @@ public class RouteUtilities {
 			if(route.contains(client)) return vehicle;
 		}	
 		return -1;
+	}
+
+
+	//returns the index in which the client can be inserted with minimum cost increase
+	public static MinimumCostInsertionInfo minimumCostInsertionPosition(ProblemInstance problemInstance,int vehicle,int client,ArrayList<Integer> route)
+	{
+		double min = 99999999;
+		int chosenInsertPosition =- 1;
+		double cost;
+		
+		double [][]costMatrix = problemInstance.costMatrix;
+		int depotCount = problemInstance.depotCount;
+		int depot = problemInstance.depotAllocation[vehicle];
+		
+		
+		if(route.size()==0)
+		{
+		//	route.add(client);	
+			
+			MinimumCostInsertionInfo info = new MinimumCostInsertionInfo();
+			info.cost = costMatrix[depot][depotCount+client] + costMatrix[depotCount+client][depot];
+			info.insertPosition=0;
+			info.loadViolation= -1;
+			info.vehicle = vehicle;
+			return info;
+		}
+		
+		cost=0;
+		cost = costMatrix[depot][depotCount+client] + costMatrix[depotCount+client][depotCount+route.get(0)];
+		cost -= (costMatrix[depot][depotCount+route.get(0)]);
+		if(cost<min)
+		{
+			min=cost;
+			chosenInsertPosition = 0;
+		}
+		
+		for(int insertPosition=1;insertPosition<route.size();insertPosition++)
+		{
+			//insert the client between insertPosition-1 and insertPosition and check 
+			cost = costMatrix[depotCount+route.get(insertPosition-1)][depotCount+client] + costMatrix[depotCount+client][depotCount+route.get(insertPosition)];
+			cost -= (costMatrix[depotCount+route.get(insertPosition-1)][depotCount+route.get(insertPosition)]);
+			if(cost<min)
+			{
+				min=cost;
+				chosenInsertPosition = insertPosition;
+			}
+		}
+		
+		cost = costMatrix[depotCount+route.get(route.size()-1)][depotCount+client] + costMatrix[depotCount+client][depot];
+		cost-=(costMatrix[depotCount+route.get(route.size()-1)][depot]);
+		
+		if(cost<min)
+		{
+			min=cost;
+			chosenInsertPosition = route.size();
+		}
+		
+		MinimumCostInsertionInfo info = new MinimumCostInsertionInfo();
+		info.cost = min;
+		info.insertPosition=chosenInsertPosition;
+		info.loadViolation= -1;
+		info.vehicle = vehicle;
+		return info;
+	
 	}
 
 }

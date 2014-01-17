@@ -8,6 +8,7 @@ import java.util.Scanner;
 import Main.VRP.ProblemInstance;
 import Main.VRP.GeneticAlgorithm.GeneticAlgorithm;
 import Main.VRP.GeneticAlgorithm.Scheme6;
+import Main.VRP.GeneticAlgorithm.TestAlgo.MutationTest;
 import Main.VRP.Individual.Individual;
 
 
@@ -16,8 +17,8 @@ public class Solver
 {
 	static public Visualiser visualiser;
 	public static boolean showViz=false;
-	String inputFileName = "MDPVRP/pr02.txt";
-	String outputFileName = "PVRP/test01.txt";
+	String inputFileName = "MDVRP/p01.txt";
+	String outputFileName = "MDVRP/test.txt";
 	int runSize=5;
 	boolean singleRun = true;
 	

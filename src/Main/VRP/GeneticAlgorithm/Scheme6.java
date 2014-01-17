@@ -21,9 +21,9 @@ public class Scheme6 implements GeneticAlgorithm
 	//Algorithm parameters
 	int POPULATION_SIZE = 100; 
 	int NUMBER_OF_OFFSPRING = 100;   
-	int NUMBER_OF_GENERATION = 100;
-	double loadPenaltyFactor = 0;
-	double routeTimePenaltyFactor = 0;
+	int NUMBER_OF_GENERATION = 5;
+	double loadPenaltyFactor = 10;
+	double routeTimePenaltyFactor = 10;
 
 	//Algorithm data structures
 	Individual population[];
@@ -103,22 +103,19 @@ public class Scheme6 implements GeneticAlgorithm
 			
 			i=0;
 			
-			/*
+			
 			parent1 = population[0];
-			parent2 = fussSelection.getIndividual(population);
+			parent2 = rouletteWheelSelection.getIndividual(population);
 			
 			offspring1 = new Individual(problemInstance);
-			offspring2 = new Individual(problemInstance);
 			
-			Crossover_Uniform_Uniform.crossOver_Uniform_Uniform(problemInstance, parent1, parent2, offspring1, offspring2);	
+			Uniform_VariedEdgeRecombnation_Crossover.crossOver_Uniform_VariedEdgeRecombination(problemInstance, parent1, parent2, offspring1);
+			
 			
 			mutation.applyMutation(offspring1);
-			mutation.applyMutation(offspring2);
 			
 			offspringPopulation[i] = offspring1;
 			i++;
-			offspringPopulation[i] = offspring2;
-			i++;*/
 			
 			while(i<NUMBER_OF_OFFSPRING)
 			{
@@ -152,8 +149,8 @@ public class Scheme6 implements GeneticAlgorithm
 					System.out.println("Individual is invalid :(!"+" gen : "+generation+"index : "+ p);
 			}
 			
-			//localImprovement.initialise(parentOffspringTotalPopulation);
-			//localImprovement.run(parentOffspringTotalPopulation);
+			localImprovement.initialise(parentOffspringTotalPopulation);
+			localImprovement.run(parentOffspringTotalPopulation);
 			
 			TotalCostCalculator.calculateCostofPopulation(parentOffspringTotalPopulation, 0, POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor);
 			
@@ -186,7 +183,7 @@ public class Scheme6 implements GeneticAlgorithm
 			
 			
 			
-			/*
+			/**
 			if(unImprovedGeneration>=5)
 			{
 				unImprovedGeneration=0;

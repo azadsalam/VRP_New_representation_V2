@@ -89,7 +89,7 @@ public class MutationWithVariedStepSize
 			}
 			else 
 			{
-				offspring.mutatePeriodAssignment();
+				//offspring.mutatePeriodAssignment();
 			}
 		}
 		

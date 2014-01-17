@@ -414,13 +414,7 @@ public class Individual
 		routes.get(period).get(chosenVehicle).add(chosenInsertPosition, client);
 	}
  
-	class MinimumCostInsertionInfo
-	{
-		public int vehicle;
-		public int insertPosition;
-		public double cost;
-		public double loadViolation;
-	}
+	
 	
 	/**
 	 * Provides minimum cost increase insertion Info 
@@ -707,7 +701,8 @@ public class Individual
 				periodAssignment[i][j] = original.periodAssignment[i][j];
 			}
 		}
-
+		
+		routes = new Vector<Vector<ArrayList<Integer>>>();
 		for(int period=0;period<problemInstance.periodCount;period++)
 		{
 			routes.add(new Vector<ArrayList<Integer>>());
@@ -977,41 +972,6 @@ public class Individual
 		*/
 	}
 	
-	
-	public void mutateRouteWithInsertion()
-	{
-		boolean success;
-		do
-		{
-			int period = Utility.randomIntInclusive(problemInstance.periodCount-1);
-			int vehicle = Utility.randomIntInclusive(problemInstance.vehicleCount-1);
-			success = mutateRouteWithInsertion(period,vehicle);
-		}while(success==false);
-	}
-	
-	private boolean mutateRouteWithInsertion(int period,int vehicle)
-	{
-		ArrayList<Integer> route = routes.get(period).get(vehicle);
-		int size=route.size(); 
-		if(route.size()<2) return false;
-		
-		int selectedClientIndex = Utility.randomIntInclusive(route.size()-1);
-		int selectedClient = route.get(selectedClientIndex);
-		
-		
-		int newIndex;
-		do
-		{
-			newIndex = Utility.randomIntInclusive(route.size()-1);
-		}while(newIndex==selectedClientIndex);
-				
-		route.remove(selectedClientIndex);
-		route.add(newIndex, selectedClient);
-		
-		//problemInstance.out.println("Period : "+period+" vehicle : "+vehicle+" selected Client : "+selectedClient+" "+ " new Position : "+newIndex);
-		return true;
-	}
-	
 
 	public void mutateRouteBySwapping()
 	{
@@ -1049,84 +1009,6 @@ public class Individual
 				
 		return true;
 	}
-	
-	
-	/** do not updates cost + penalty
-	 if sobgula client er frequency = period hoy tahole, period assignment mutation er kono effect nai
-	*/
-	public void mutatePeriodAssignment()
-	{
-		boolean success;
-		int clientNo;
-		int total = problemInstance.customerCount;
-		do
-		{
-			clientNo = Utility.randomIntInclusive(problemInstance.customerCount-1);
-			success = mutatePeriodAssignment(clientNo);
-			total--;
-		}while(success==false && total>0);
-	
-	}
-	
-	//returns 0 if it couldnt mutate as period == freq
-	//need to edit this- must repair 
-	private boolean mutatePeriodAssignment(int clientNo)
-	{
-		//no way to mutate per. ass. as freq. == period
-		if(problemInstance.frequencyAllocation[clientNo] == problemInstance.periodCount) return false;
-		if(problemInstance.frequencyAllocation[clientNo] == 0) return false;		
-
-		int previouslyAssigned; // one period that was assigned to client
-		do
-		{
-			previouslyAssigned = Utility.randomIntInclusive(problemInstance.periodCount-1);
-		} while (periodAssignment[previouslyAssigned][clientNo]==false);
-
-		int previouslyUnassigned;//one period that was NOT assigned to client
-		do
-		{
-			previouslyUnassigned = Utility.randomIntInclusive(problemInstance.periodCount-1);
-		} while (periodAssignment[previouslyUnassigned][clientNo]==true);
-
-		periodAssignment[previouslyAssigned][clientNo] = false;
-		periodAssignment[previouslyUnassigned][clientNo]= true;
-
-		int vehicle = removeClientFromPeriod(previouslyAssigned,clientNo);
-		addClientIntoPeriod(previouslyUnassigned,vehicle,clientNo);
-
-		//problemInstance.out.println("previouslyAssigned Period : "+previouslyAssigned+"previouslyUnassigned : "+previouslyUnassigned+" vehicle  : "+vehicle+" client "+clientNo);
-
-		return true;
-	}
-	
-	private void addClientIntoPeriod(int period, int vehicle, int client)
-	{
-		ArrayList<Integer> route = routes.get(period).get(vehicle);
-		
-		int position = Utility.randomIntInclusive(route.size());
-		route.add(position,client);
-	}
-	/** Removes client from that periods route
-	 * 
-	 * @param period
-	 * @param client
-	 * @return number of the vehicle, of which route it was present.. <br/> -1 if it wasnt present in any route
-	 */
-	private int removeClientFromPeriod(int period, int client)
-	{
-		
-		for(int vehicle=0;vehicle<problemInstance.vehicleCount;vehicle++)
-		{
-			ArrayList<Integer> route = routes.get(period).get(vehicle);
-			if(route.contains(client))
-			{
-				route.remove(new Integer(client));
-				return vehicle;
-			}
-		}
-		return -1;
-	}
-		
 
 	public boolean validationTest()
 	{

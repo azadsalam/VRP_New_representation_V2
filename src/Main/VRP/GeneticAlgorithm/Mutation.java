@@ -1,6 +1,10 @@
 package Main.VRP.GeneticAlgorithm;
 import Main.Utility;
 import Main.VRP.Individual.Individual;
+import Main.VRP.Individual.MutationOperators.InsertionMutation;
+import Main.VRP.Individual.MutationOperators.InsertionMutationGreedy;
+import Main.VRP.Individual.MutationOperators.MutatePeriodAssignment;
+import Main.VRP.Individual.MutationOperators.MutateVehicleAssignmentGreedy;
 
 
 public class Mutation 
@@ -30,19 +34,21 @@ public class Mutation
 		}
 		else if (selectedMutationOperator == 1)
 		{			
-			//offspring.mutateTwoDifferentRouteBySwapping();
+			InsertionMutationGreedy.mutate(offspring);
 		}
 		else if (selectedMutationOperator == 2)
 		{
-			offspring.mutateRouteWithInsertion();
+			InsertionMutation.mutateRouteWithInsertion(offspring);
+//			offspring.mutateRouteWithInsertion();
 		}
 		else if (selectedMutationOperator == 3)
 		{
 			//offspring.mutateTwoDifferentRouteBySubstitution();
+			MutateVehicleAssignmentGreedy.mutate(offspring);
 		}
 		else 
 		{
-			offspring.mutatePeriodAssignment();
+			MutatePeriodAssignment.mutatePeriodAssignment(offspring);
 		}
 		
 		offspring.calculateCostAndPenalty();
