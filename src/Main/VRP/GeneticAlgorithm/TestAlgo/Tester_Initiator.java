@@ -99,7 +99,7 @@ public class Tester_Initiator  implements GeneticAlgorithm
 		
 		double infeasiblePercent= ((double)infeasible*100/POPULATION_SIZE);
 		
-		System.out.printf("Max : %d Avg : %f Count : %d \n",Individual.max,(double)Individual.total/Individual.count,Individual.count);
+		//System.out.printf("Max : %d Avg : %f Count : %d \n",Individual.max,(double)Individual.total/Individual.count,Individual.count);
 		System.out.println("Best : "+min +" avg : "+(total/POPULATION_SIZE)+" worst : "+max+ "Infeasible : "+infeasiblePercent+"%  invalid : "+invalid);
 
 		if(Solver.showViz==true)
@@ -123,7 +123,7 @@ public class Tester_Initiator  implements GeneticAlgorithm
 		for(int i=0; i<POPULATION_SIZE; i++)
 		{
 			population[i] = new Individual(problemInstance);
-			population[i].initialise();
+			population[i].initialise_Closest_Depot_Uniform_Cut();
 			//out.println("Printing Initial individual "+ i +" : \n");
 			TotalCostCalculator.calculateCost(population[i], loadPenaltyFactor, routeTimePenaltyFactor);
 			//population[i].print();

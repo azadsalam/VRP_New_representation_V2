@@ -1,4 +1,4 @@
-package Main.VRP.LocalImprovement;
+/*package Main.VRP.LocalImprovement;
 
 
 import java.util.Random;
@@ -8,7 +8,7 @@ import Main.VRP.GeneticAlgorithm.TotalCostCalculator;
 import Main.VRP.Individual.Individual;
 
 
-/**
+*//**
  * Artificial Intelligence A Modern Approach (3rd Edition): Figure 4.5, page
  * 126.<br>
  * <br>
@@ -34,24 +34,24 @@ import Main.VRP.Individual.Individual;
  *
  * @author Ravi Mohan
  * @author Mike Stampone
- */
+ *//*
 
 
-public class SimulatedAnnealing  extends LocalSearch
+class SimulatedAnnealing2  extends LocalSearch
 {
 
         private Scheduler scheduler;
         private Random rand;
         private Mutation mutation;
 
-        /**
+        *//**
          * Constructs a simulated annealing search from the specified heuristic
          * function and a default scheduler.
          *
          * @param hf
          *            a heuristic function
-         */
-        public SimulatedAnnealing() 
+         *//*
+        public SimulatedAnnealing2() 
         {         
         	scheduler = new Scheduler();
         	rand = new Random();
@@ -116,7 +116,7 @@ public class SimulatedAnnealing  extends LocalSearch
                                                 temperature, deltaE));
         }
 
-        /**
+        *//**
          * Returns <em>e</em><sup>&delta<em>E / T</em></sup>
          *
          * @param temperature
@@ -125,7 +125,7 @@ public class SimulatedAnnealing  extends LocalSearch
          * @param deltaE
          *            VALUE[<em>next</em>] - VALUE[<em>current</em>]
          * @return <em>e</em><sup>&delta<em>E / T</em></sup>
-         */
+         *//*
         public double probabilityOfAcceptance(double temperature, double deltaE) {
                 return Math.exp(deltaE / temperature);
         }
@@ -139,12 +139,11 @@ public class SimulatedAnnealing  extends LocalSearch
 		}
 }
 
-/**
+*//**
  * @author Ravi Mohan
  *
- */
-class Scheduler 
-{
+ *//*
+class Scheduler {
 
         private final int k, limit;
 
@@ -178,3 +177,4 @@ class Scheduler
 
 
 
+*/

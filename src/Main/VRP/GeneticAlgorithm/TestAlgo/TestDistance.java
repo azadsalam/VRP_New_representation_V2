@@ -15,7 +15,7 @@ public class TestDistance  implements GeneticAlgorithm
 {
 	PrintWriter out; 
 	
-	int POPULATION_SIZE = 100;
+	int POPULATION_SIZE = 20;
 	int NUMBER_OF_OFFSPRING = 10;
 	int NUMBER_OF_GENERATION = 1;
 	
@@ -58,7 +58,7 @@ public class TestDistance  implements GeneticAlgorithm
 	{
 		
 		Individual selectedParent1,selectedParent2;
-		int i;
+		//int i;
 		
 		Individual parent1,parent2,offspring;
 
@@ -66,8 +66,32 @@ public class TestDistance  implements GeneticAlgorithm
 		initialisePopulation();
 
 
-		SelectionOperator so = new FUSS();
-		double[] distances = new double[NUMBER_OF_OFFSPRING];
+		//SelectionOperator so = new FUSS();
+		
+		for(int i=0;i<POPULATION_SIZE;i+=2)
+		{
+			if(Individual.isDuplicate(problemInstance,population[i], population[i+1]))
+			{
+				out.println("--------------------\n--------------------------\nDUPLICATES : \n");
+				
+				population[i].print();
+				population[i+1].print();
+				
+				out.println("--------------------\n\n");
+			}
+			else
+			{
+				out.println("------------------NOT DUPLICATES : \n");
+				
+				population[i].print();
+				population[i+1].print();
+				
+				out.println("--------------------------------\n\n");
+			}
+		}
+		
+		
+/*		double[] distances = new double[NUMBER_OF_OFFSPRING];
 		for(int generation=0;generation<1;generation++)
 		{
 			
@@ -77,7 +101,7 @@ public class TestDistance  implements GeneticAlgorithm
 				//System.out.println(d);
 			}
 			
-			/*
+			
 
 			so.initialise(population, false);
 			for( i=0;i<NUMBER_OF_OFFSPRING;i++)
@@ -95,7 +119,7 @@ public class TestDistance  implements GeneticAlgorithm
 					out.println("\n\n");
 			}
 
-	*/
+	
 
 		}
 
@@ -105,7 +129,7 @@ public class TestDistance  implements GeneticAlgorithm
 			out.println(distances[i]);
 		}
 		
-		return population[0];
+*/		return population[0];
 
 	}
 	
@@ -116,7 +140,7 @@ public class TestDistance  implements GeneticAlgorithm
 		for(int i=0; i<POPULATION_SIZE; i++)
 		{
 			population[i] = new Individual(problemInstance);
-			population[i].initialise();
+			population[i].initialise_Closest_Depot_Greedy_Cut();
 			//out.println("Printing individual "+ i +" : \n");
 			//population[i].print();
 		}

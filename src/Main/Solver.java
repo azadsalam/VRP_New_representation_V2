@@ -9,6 +9,8 @@ import Main.VRP.ProblemInstance;
 import Main.VRP.GeneticAlgorithm.GeneticAlgorithm;
 import Main.VRP.GeneticAlgorithm.Scheme6;
 import Main.VRP.GeneticAlgorithm.TestAlgo.MutationTest;
+import Main.VRP.GeneticAlgorithm.TestAlgo.TestDistance;
+import Main.VRP.GeneticAlgorithm.TestAlgo.Tester_Initiator;
 import Main.VRP.Individual.Individual;
 
 
@@ -17,8 +19,8 @@ public class Solver
 {
 	static public Visualiser visualiser;
 	public static boolean showViz=false;
-	String inputFileName = "MDVRP/p01.txt";
-	String outputFileName = "MDVRP/test.txt";
+	String inputFileName = "PVRP/p23.txt";
+	String outputFileName = "PVRP/out23.txt";
 	int runSize=5;
 	boolean singleRun = true;
 	
@@ -77,6 +79,10 @@ public class Solver
 		// singlerun = true when excel needs to be generated or output checked for testing
 		// sigleRun = false when aggregated report is to be generated
 		
+		long start,end;
+		
+		start = System.currentTimeMillis();
+		
 		writeToExcel = singleRun;
 		outputToFile = singleRun;
 		generateAggregatedReport = !singleRun;
@@ -102,6 +108,11 @@ public class Solver
 		
 		System.out.println("mutateTwoDifferentRouteBySwapping Failed : "+mutateRouteOfTwoDiefferentFailed);
 		output.close();
+		
+		end= System.currentTimeMillis();
+		
+		double minute = ((double)end-start) / 1000 / 60;
+		System.out.println("ELAPSED TIME : " + minute);
 	}
 	
 	

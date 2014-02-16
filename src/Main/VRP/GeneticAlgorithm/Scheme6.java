@@ -11,6 +11,7 @@ import Main.VRP.LocalImprovement.FirstChoiceHillClimbing;
 import Main.VRP.LocalImprovement.LocalImprovement;
 import Main.VRP.LocalImprovement.LocalImprovementBasedOnFussandElititst;
 import Main.VRP.LocalImprovement.LocalSearch;
+import Main.VRP.LocalImprovement.SimulatedAnnealing;
 import Main.VRP.SelectionOperator.FUSS;
 import Main.VRP.SelectionOperator.RoutletteWheelSelection;
 import Main.VRP.SelectionOperator.SelectionOperator;
@@ -21,7 +22,7 @@ public class Scheme6 implements GeneticAlgorithm
 	//Algorithm parameters
 	int POPULATION_SIZE = 100; 
 	int NUMBER_OF_OFFSPRING = 100;   
-	int NUMBER_OF_GENERATION = 5;
+	int NUMBER_OF_GENERATION = 50;
 	double loadPenaltyFactor = 10;
 	double routeTimePenaltyFactor = 10;
 
@@ -142,19 +143,41 @@ public class Scheme6 implements GeneticAlgorithm
 			Utility.concatPopulation(parentOffspringTotalPopulation, population, offspringPopulation);
 			
 			
-			
 			for(int p=0;p<parentOffspringTotalPopulation.length;p++)
 			{
 				if(parentOffspringTotalPopulation[p].validationTest()==false)
-					System.out.println("Individual is invalid :(!"+" gen : "+generation+"index : "+ p);
+				{
+					System.out.println("ERROR\nERROR\nERROR\nIndividual is invalid :(!"+" gen : "+generation+"index : "+ p);
+					return population[0];
+				}
+				
 			}
-			
+						
 			localImprovement.initialise(parentOffspringTotalPopulation);
 			localImprovement.run(parentOffspringTotalPopulation);
 			
 			TotalCostCalculator.calculateCostofPopulation(parentOffspringTotalPopulation, 0, POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor);
 			
 			//Preserving the k% best individual + FUSS approach, the n portion of best individuals always make to next generation
+			Utility.sort(parentOffspringTotalPopulation);
+			
+			for(int p=0;p<parentOffspringTotalPopulation.length-1;p++)
+			{
+				if(parentOffspringTotalPopulation[p].cost == parentOffspringTotalPopulation[p+1].cost)
+				{
+					if(Individual.isDuplicate(problemInstance, parentOffspringTotalPopulation[p], parentOffspringTotalPopulation[p+1]))
+					{
+						parentOffspringTotalPopulation[p] = new Individual(problemInstance);
+						parentOffspringTotalPopulation[p].initialise_Closest_Depot_Greedy_Cut();
+						TotalCostCalculator.calculateCost(parentOffspringTotalPopulation[p], loadPenaltyFactor, routeTimePenaltyFactor);
+						//parentOffspringTotalPopulation[p].calculateCostAndPenalty();
+						System.out.println("DUPLICATE");
+					}
+				}
+				
+			}
+
+			//TotalCostCalculator.calculateCostofPopulation(parentOffspringTotalPopulation, 0, POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor);
 			Utility.sort(parentOffspringTotalPopulation);
 
 			int elitistRatio = POPULATION_SIZE * 10 /100 ;

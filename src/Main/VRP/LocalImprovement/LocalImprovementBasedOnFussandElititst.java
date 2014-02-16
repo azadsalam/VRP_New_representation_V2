@@ -9,7 +9,8 @@ public class LocalImprovementBasedOnFussandElititst extends LocalImprovement
 {
 	public LocalImprovementBasedOnFussandElititst(double loadPenaltyFactor,
 			double routeTimePenaltyFactor, LocalSearch localSearch,
-			int populationSize) {
+			int populationSize) 
+	{
 		super(loadPenaltyFactor, routeTimePenaltyFactor, localSearch, populationSize);
 		// TODO Auto-generated constructor stub
 		

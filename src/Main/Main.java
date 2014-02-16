@@ -12,6 +12,7 @@ public class Main
 	{
 	//	System.out.println("Saikat!");
 		
+		
 		final Solver solver = new Solver();
 		solver.initialise();
 		Thread thread1=new Thread() {			
@@ -26,6 +27,7 @@ public class Main
 		thread1.start();
 		//thread2.start();
 		
+
 		
 	}
 

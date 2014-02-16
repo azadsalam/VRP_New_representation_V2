@@ -54,7 +54,7 @@ public class Individual
 		isFeasible = false;	
 	}
 	
-	public void initialise() 
+	public void initialise_Closest_Depot_Greedy_Cut() 
 	{
 		// TODO Auto-generated method stub
 		
@@ -89,6 +89,130 @@ public class Individual
 		calculateCostAndPenalty();
 	}
 	
+		
+	public void initialise_Closest_Depot_Uniform_Cut() 
+	{
+		// TODO Auto-generated method stub
+		
+		// NOW INITIALISE WITH VALUES
+		//initialize period assignment
+
+		int freq,allocated,random;
+		//Randomly allocate period to clients equal to their frequencies
+		
+		for(int client=0; client < problemInstance.customerCount; client++)
+		{
+			freq = problemInstance.frequencyAllocation[client];
+			allocated=0;
+
+			while(allocated!=freq)
+			{
+				random = Utility.randomIntInclusive(problemInstance.periodCount-1);
+				
+				if(periodAssignment[random][client]==false)
+				{
+					periodAssignment[random][client]=true;
+					allocated++;
+				}
+			}
+		}
+		
+
+		
+		//assignRoutesWithClosestDepotWithNeighbourCheckHeuristic();
+		
+		bigClosestDepotRouteWithUniformCut();
+		calculateCostAndPenalty();
+	}
+
+	private void bigClosestDepotRouteWithUniformCut()
+	{
+		//Assign customer to route
+		boolean[] clientMap = new boolean[problemInstance.customerCount];
+		
+		int assigned=0;
+		bigRoutes = new ArrayList<ArrayList<ArrayList<Integer>>>();
+		
+		for(int period=0;period<problemInstance.periodCount;period++)
+		{
+			bigRoutes.add(new ArrayList<ArrayList<Integer>>());
+			for(int depot=0;depot<problemInstance.depotCount;depot++)
+			{
+				bigRoutes.get(period).add(new ArrayList<Integer>());
+			}
+		}
+		
+		//create big routes
+		while(assigned<problemInstance.customerCount)
+		{
+			int clientNo = Utility.randomIntInclusive(problemInstance.customerCount-1);
+			if(clientMap[clientNo]) continue;
+			clientMap[clientNo]=true;
+			assigned++;
+			
+			
+			for(int period=0;period<problemInstance.periodCount;period++)
+			{		
+				if(periodAssignment[period][clientNo]==false)continue;
+
+				int depot = closestDepot(clientNo);	
+				insertIntoBigClosestDepotRoute(clientNo, depot, period);
+			}			
+		}
+		
+		//now cut the routes and distribute to vehicles
+		for(int period=0; period<problemInstance.periodCount;period++)
+		{
+			for(int depot=0; depot<problemInstance.depotCount;depot++)
+			{
+
+				uniformCut(period, depot);
+				/*int vehicle = problemInstance.vehiclesUnderThisDepot.get(depot).get(0);
+				ArrayList<Integer >route = routes.get(period).get(vehicle);
+				route.clear();
+				route.addAll(bigRoutes.get(period).get(depot));*/
+				
+			}
+		}
+	}
+	
+	private void uniformCut(int period,int depot) 
+	{
+		ArrayList<Integer> bigRoute = bigRoutes.get(period).get(depot);		
+		ArrayList<Integer> vehicles = problemInstance.vehiclesUnderThisDepot.get(depot);
+		
+		int currentVehicleIndex = 0;
+		int bigRouteSize = bigRoute.size();
+		int clientPerVehicle = bigRouteSize/vehicles.size();
+		
+		for(currentVehicleIndex=0;currentVehicleIndex<vehicles.size();currentVehicleIndex++)
+		{
+			for(int i=0;i<clientPerVehicle;i++)
+			{
+				int vehicle = vehicles.get(currentVehicleIndex);
+				int client = bigRoute.get(0);
+				routes.get(period).get(vehicle).add(client);
+				bigRoute.remove(0);
+			}
+		}
+		
+		if(!bigRoute.isEmpty())
+		{
+			
+			while(!bigRoute.isEmpty())
+			{
+				int client = bigRoute.get(0);
+				int vehicle = vehicles.get(vehicles.size()-1);
+				
+				routes.get(period).get(vehicle).add(client);
+				bigRoute.remove(0);
+			}
+		}
+
+		
+
+	}
+
 	private void bigClosestDepotRouteWithGreedyCut()
 	{
 		//Assign customer to route
@@ -177,10 +301,13 @@ public class Individual
 		
 		if(!bigRoute.isEmpty())
 		{
+			
+			//BOOK KEEPING 
 			int left = bigRoute.size();
 			if(left>max)max=left;
 			count++;
 			total+=left;
+			///////
 			
 			//System.out.println("LEFT : "+bigRoute.size());
 			while(!bigRoute.isEmpty())
@@ -212,7 +339,7 @@ public class Individual
 			return;
 		}
 		
-		cost=0;
+		cost = 0;
 		cost = costMatrix[depot][depotCount+client] + costMatrix[depotCount+client][depotCount+route.get(0)];
 		cost -= (costMatrix[depot][depotCount+route.get(0)]);
 		if(cost<min)
@@ -1098,4 +1225,23 @@ public class Individual
 	}
 
 
+	public static boolean isDuplicate(ProblemInstance problemInstance,Individual i1, Individual i2)
+	{
+		for(int period=0; period<problemInstance.periodCount; period++)
+		{
+			for(int vehicle=0;vehicle<problemInstance.vehicleCount;vehicle++)
+			{
+				ArrayList<Integer> route1 = i1.routes.get(period).get(vehicle);
+				ArrayList<Integer> route2 = i2.routes.get(period).get(vehicle);
+				
+				if(route1.size() != route2.size()) return false;
+				for(int i=0;i<route1.size();i++)
+				{
+					if(route1.get(i)!= route2.get(i)) return false;
+				}
+			}
+		}
+		
+		return true;
+	}
 }

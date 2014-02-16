@@ -114,7 +114,7 @@ public class TestAlgo  implements GeneticAlgorithm
 		for(int i=0; i<POPULATION_SIZE; i++)
 		{
 			population[i] = new Individual(problemInstance);
-			population[i].initialise();
+			population[i].initialise_Closest_Depot_Greedy_Cut();
 			//out.println("Printing individual "+ i +" : \n");
 			population[i].print();
 		}
