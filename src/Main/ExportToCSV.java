@@ -21,7 +21,10 @@ public class ExportToCSV
 		// TODO Auto-generated constructor stub
 		this.inputFileName =  inputFileName;
 		
-		outputFile = new File(inputFileName.substring(0,inputFileName.lastIndexOf("."))+"_Solution_over_generation.csv");
+		int lastIndex = inputFileName.lastIndexOf(".");
+		if(lastIndex==-1)lastIndex = inputFileName.length();
+		
+		outputFile = new File(inputFileName.substring(0,lastIndex)+"_Solution_over_generation.csv");
 		//output = new PrintWriter(System.out);//for console output
 		try 
 		{

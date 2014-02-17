@@ -19,8 +19,8 @@ public class Solver
 {
 	static public Visualiser visualiser;
 	public static boolean showViz=false;
-	String inputFileName = "PVRP/p32.txt";
-	String outputFileName = "PVRP/out32.txt";
+	String inputFileName = "benchmark/MDVRP/p01";
+	String outputFileName = "benchmark/MDVRP/out02.txt";
 	int runSize=5;
 	boolean singleRun = true;
 	
@@ -49,17 +49,22 @@ public class Solver
 			output = new PrintWriter(outputFile);//for file output
 						
 			
-			int testCases = input.nextInt(); 
-			input.nextLine(); // escaping comment
-			// FOR NOW IGNORE TEST CASES, ASSUME ONLY ONE TEST CASE
-			output.println("Test cases (Now ignored): "+ testCases);
-
+			int testCases = 1;			
 			
 			exportToCsv = new ExportToCSV(inputFileName);
 			//exportToCsv.createCSV(10);
-			problemInstance = new ProblemInstance(input,output);
 			
-			
+			if(inputFileName.startsWith("benchmark"))
+				problemInstance = new ProblemInstance(input,output,true);
+			else
+			{
+				testCases = input.nextInt(); 
+				input.nextLine(); // escaping comment
+				// FOR NOW IGNORE TEST CASES, ASSUME ONLY ONE TEST CASE
+				output.println("Test cases (Now ignored): "+ testCases);
+				output.flush();
+				problemInstance = new ProblemInstance(input,output);
+			}
 		}
 		catch (FileNotFoundException e)
 		{
@@ -89,6 +94,7 @@ public class Solver
 		
 		problemInstance.print();
 	
+		//if(true)return;
 		
 		if(showViz)
 			visualiser = new Visualiser("original/"+inputFileName.substring(0, inputFileName.length()-4),problemInstance);

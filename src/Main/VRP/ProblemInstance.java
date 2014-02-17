@@ -32,6 +32,7 @@ public class ProblemInstance
 	
 	public int frequencyAllocation[];
 
+	public double co_ordinates[][];
 	
 	public ProblemInstance(Scanner input,PrintWriter output) throws FileNotFoundException
 	{
@@ -42,7 +43,6 @@ public class ProblemInstance
 		
 		
 		periodCount = in.nextInt();
-		
 		
 		escapeComment(in);
 		
@@ -162,6 +162,177 @@ public class ProblemInstance
 		//print();
 	}
 	
+	public ProblemInstance(Scanner input,PrintWriter output, boolean fromOriginalBenchmark) throws FileNotFoundException
+	{
+		// TODO Auto-generated constructor stub
+		this.in = input;
+		this.out = output;
+		
+		
+		int type = in.nextInt();
+		
+		int vehicleCountPerDepot = in.nextInt();
+		customerCount = in.nextInt();
+				
+		if(type==8)//MDPVRP
+		{	
+			periodCount = in.nextInt();
+			depotCount = in.nextInt();
+		}
+		else if(type ==2 ) // MDVRP
+		{
+			periodCount = 1;
+			depotCount = in.nextInt();
+		}
+		else if(type == 1) //PVRP
+		{
+			periodCount = in.nextInt();
+			depotCount = 1;
+		}
+		else
+		{
+			throw new FileNotFoundException("INVALID TYPE ");
+		}
+		
+		vehicleCount = vehicleCountPerDepot * depotCount;
+		
+		
+		
+		numberOfVehicleAllocatedToThisDepot = new int[depotCount];
+		depotAllocation = new int[vehicleCount];
+		vehiclesUnderThisDepot = new ArrayList<ArrayList<Integer>>();
+		
+		
+		for(int i=0;i<depotCount;i++)
+		{
+			vehiclesUnderThisDepot.add(new ArrayList<Integer>());
+		}
+		
+		int vehicleCursor = 0;
+
+		for(int  j=0;j<depotCount;j++)
+		{
+			numberOfVehicleAllocatedToThisDepot[j] = vehicleCountPerDepot;
+
+			for( int i=0;i<numberOfVehicleAllocatedToThisDepot[j];i++)
+			{
+				depotAllocation[vehicleCursor]=j;
+				vehiclesUnderThisDepot.get(j).add(vehicleCursor);
+				vehicleCursor++;
+			}
+		}
+
+		//read periodCount lines
+        timeConstraintsOfVehicles = new double[periodCount][vehicleCount];
+		loadCapacity = new double[vehicleCount];
+
+
+        
+      //read periodCount lines
+        //timeConstraintsOfVehicles = new double[periodCount][vehicleCount];
+        
+		for(int period=0;period<periodCount;period++)
+		{
+			for(int depot=0;depot<depotCount;depot++)
+			{
+				double maxDuration = in.nextDouble();
+				double maxLoad = in.nextDouble();
+
+				for(int v = 0; v<vehicleCountPerDepot;v++)
+				{
+					timeConstraintsOfVehicles[period][v+depot*vehicleCountPerDepot] = maxDuration;
+					loadCapacity[v + depot*vehicleCountPerDepot] = maxLoad;
+				}	
+			}
+		}
+		
+		nodeCount = depotCount+customerCount;
+		
+		//System.out.println(nodeCount);
+		
+		costMatrix = new double[nodeCount][nodeCount];
+
+		
+		co_ordinates = new double[depotCount+customerCount][2];
+		serviceTime = new double[customerCount];
+		demand = new double[customerCount];
+		frequencyAllocation = new int[customerCount];
+
+		
+		if(type == 8 || type == 1) //PVRP & MDPVRP
+		{
+			readInfoForDepot();
+			readInfoForClient();
+		}
+		else
+		{
+			readInfoForClient();
+			readInfoForDepot();
+		}
+		
+				
+		
+		
+		for(int i=0;i<nodeCount;i++)
+		{
+			for(int j=0; j<nodeCount;j++)
+			{
+				double x1 = co_ordinates[i][0];
+				double y1 = co_ordinates[i][1];
+
+				double x2 = co_ordinates[j][0];
+				double y2 = co_ordinates[j][1];
+				
+				double distance = (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2);
+				distance = Math.sqrt(distance);
+				costMatrix[i][j] = distance;
+				
+			}
+			
+		}
+		travellingTimeMatrix = costMatrix;
+		
+		//print();
+	}
+
+	public void readInfoForDepot()
+	{
+		for(int depot=0;depot<depotCount;depot++)
+		{
+			int serialNo = in.nextInt();
+			
+			double x = in.nextDouble();
+			double y = in.nextDouble();
+			
+			co_ordinates[depot][0] = x;
+			co_ordinates[depot][1] = y;
+			
+			escapeComment(in);
+		}
+	}
+	public void readInfoForClient()
+	{
+		for(int client=0;client<customerCount;client++)
+		{
+			int serialNo = in.nextInt();
+			
+			double x = in.nextDouble();
+			double y = in.nextDouble();
+			
+			co_ordinates[depotCount+client][0] = x;
+			co_ordinates[depotCount+client][1] = y;
+			
+			
+			serviceTime[client] = in.nextDouble();
+			demand[client] = in.nextDouble();
+			frequencyAllocation[client] = in.nextInt();
+			
+			
+			escapeComment(in);
+
+		}
+	}
+	
 	public void print() 
 	{
 		int i,j;
@@ -193,12 +364,12 @@ public class ProblemInstance
         }
 		
 		
-		out.print("Load capacity per vehicle :");
+		/*out.print("Load capacity per vehicle :");
 		for(i=0;i<vehicleCount;i++) out.print(" "+loadCapacity[i]);
 		out.print("\n");
+		*/
 		
-		
-		
+
 		
 		out.println("Clients : "+customerCount);
 
@@ -214,18 +385,22 @@ public class ProblemInstance
 		for( i =0;i<customerCount ;i++) out.print(demand[i] + " ");
 		out.println();
 
+		out.flush();
 		out.print("Printing cost matrix : \n");
 
 		int row,col;
 		for( row=0;row<nodeCount;row++)
 		{
+			out.print("from node - "+row +" : ");
 			for( col=0;col<nodeCount;col++)
+			{
 				out.print(costMatrix[row][col]+" ");
+			}
 			out.println();
 		}
 		out.println();
 		
-		
+		out.flush();
 				
 	}
 	
