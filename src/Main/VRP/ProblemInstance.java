@@ -2,6 +2,7 @@ package Main.VRP;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 
@@ -32,7 +33,9 @@ public class ProblemInstance
 	
 	public int frequencyAllocation[];
 
+	public ArrayList<ArrayList<Integer>> allPossibleVisitCombinations;
 	public double co_ordinates[][];
+	
 	
 	public ProblemInstance(Scanner input,PrintWriter output) throws FileNotFoundException
 	{
@@ -259,14 +262,22 @@ public class ProblemInstance
 		frequencyAllocation = new int[customerCount];
 
 		
+		allPossibleVisitCombinations = new ArrayList<ArrayList<Integer>>();
+		for(int client=0;client<customerCount;client++)
+		{
+			allPossibleVisitCombinations.add(new ArrayList<Integer>());
+		}
+		
+		
+		
 		if(type == 8 || type == 1) //PVRP & MDPVRP
 		{
 			readInfoForDepot();
-			readInfoForClient();
+			readInfoForClient(type);
 		}
 		else
 		{
-			readInfoForClient();
+			readInfoForClient(type);
 			readInfoForDepot();
 		}
 		
@@ -310,7 +321,7 @@ public class ProblemInstance
 			escapeComment(in);
 		}
 	}
-	public void readInfoForClient()
+	public void readInfoForClient(int type)
 	{
 		for(int client=0;client<customerCount;client++)
 		{
@@ -327,7 +338,28 @@ public class ProblemInstance
 			demand[client] = in.nextDouble();
 			frequencyAllocation[client] = in.nextInt();
 			
-			
+			if(type == 8 || type == 1) //PVRP & MDPVRP
+			{
+				int possibleCOmbinations = in.nextInt();
+				//System.out.println(possibleCOmbinations);
+				for(int i=0;i<possibleCOmbinations;i++)
+				{
+					int comb = in.nextInt();
+				//	System.out.print(comb+" ");
+					allPossibleVisitCombinations.get(client).add(comb);
+				}
+			}
+			else //MDVRP
+			{
+				int possibleCOmbinations = 1;
+				//System.out.println(possibleCOmbinations);
+				for(int i=0;i<possibleCOmbinations;i++)
+				{
+				//	System.out.print(comb+" ");
+					allPossibleVisitCombinations.get(client).add(1);
+				}				
+			}
+//			System.out.println();
 			escapeComment(in);
 
 		}
@@ -400,6 +432,25 @@ public class ProblemInstance
 		}
 		out.println();
 		
+		
+		if(allPossibleVisitCombinations!=null)
+		{
+			out.println("Visit Combinations : ");
+			for(int client=0;client<customerCount;client++)
+			{
+				out.print("Client "+client+ " : ");
+				int size = allPossibleVisitCombinations.get(client).size();
+				//System.out.println(size);
+				for(int indx=0;indx<size;indx++)
+				{
+					int comb  = allPossibleVisitCombinations.get(client).get(indx);					
+					out.print(comb+" ( "+ Arrays.toString(toBinaryArray(comb))+" ) ");
+				}
+				out.println("");	
+			}
+		}
+
+			
 		out.flush();
 				
 	}
@@ -415,6 +466,30 @@ public class ProblemInstance
 		return this.out;
 		
 	}
+	
+	
+	public int[] toBinaryArray(int combination)
+	{
+		int[] bitArray = new int[periodCount];
+		
+		for(int i=periodCount-1;i>=0;i--)
+		{
+			bitArray[i] = combination%2;
+			combination/=2;
+		}
+		return bitArray;
+		//return  Arrays.toString(bitArray);
+		
+		/*StringBuilder bitString = new StringBuilder(Integer.toBinaryString(combination)); 
+		
+		while(bitString.length()<periodCount)
+		{
+			bitString = new StringBuilder("0").append(bitString);
+		}
+		
+		return bitString.toString();*/
+	}
+	
 	
 	
 }

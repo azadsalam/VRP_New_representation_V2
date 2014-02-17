@@ -35,7 +35,54 @@ public class MutatePeriodAssignment {
 	{
 		ProblemInstance problemInstance = individual.problemInstance;
 		
-		//no way to mutate per. ass. as freq. == period
+		ArrayList<Integer> allPossibleCombinationsForThisClient =  problemInstance.allPossibleVisitCombinations.get(clientNo);
+		
+		int size = allPossibleCombinationsForThisClient.size();
+		if( size == 1) return false;
+		
+		
+		//problemInstance.out.println("Client "+clientNo);
+		
+		int previousCombination = individual.visitCombination[clientNo];
+		int newCombination = previousCombination;
+		//int size = 
+		
+		while(newCombination == previousCombination)
+		{
+			int ran = Utility.randomIntInclusive(size-1);
+			newCombination = allPossibleCombinationsForThisClient.get(ran);
+		}
+		
+		individual.visitCombination[clientNo] = newCombination; 
+		
+		//remove the client from previous combinations
+		// add client to new combinations
+		int[] bitArrayPrev = problemInstance.toBinaryArray(previousCombination);
+		for(int period=0;period<problemInstance.periodCount;period++)
+		{
+			if(individual.periodAssignment[period][clientNo]) 
+			{
+				removeClientFromPeriod(individual, period, clientNo);
+				//individual.periodAssignment[period][clientNo] = false;
+			}	
+		}
+		
+		int[] newBitArray = problemInstance.toBinaryArray(newCombination);
+		for(int period=0;period<problemInstance.periodCount;period++)
+		{
+			if(newBitArray[period]==1) 
+			{
+				addClientIntoPeriodGreedy(individual, period, clientNo);
+				individual.periodAssignment[period][clientNo] = true;
+			}	
+			else
+			{
+				individual.periodAssignment[period][clientNo] = false;
+			}
+		}
+		
+		
+/*		//no way to mutate per. ass. as freq. == period
 		if(problemInstance.frequencyAllocation[clientNo] == problemInstance.periodCount) return false;
 		if(problemInstance.frequencyAllocation[clientNo] == 0) return false;		
 
@@ -56,7 +103,7 @@ public class MutatePeriodAssignment {
 
 		removeClientFromPeriod(individual,previouslyAssigned,clientNo);
 		addClientIntoPeriodGreedy(individual, previouslyUnassigned,clientNo);
-
+*/
 		//problemInstance.out.println("previouslyAssigned Period : "+previouslyAssigned+"previouslyUnassigned : "+previouslyUnassigned+" vehicle  : "+vehicle+" client "+clientNo);
 
 		return true;

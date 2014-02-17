@@ -6,6 +6,7 @@ import Main.Solver;
 import Main.Utility;
 import Main.VRP.ProblemInstance;
 import Main.VRP.Individual.Individual;
+import Main.VRP.Individual.Crossover.Crossover_Uniform_Uniform;
 import Main.VRP.Individual.Crossover.Uniform_VariedEdgeRecombnation_Crossover;
 import Main.VRP.LocalImprovement.FirstChoiceHillClimbing;
 import Main.VRP.LocalImprovement.LocalImprovement;
@@ -22,7 +23,7 @@ public class Scheme6 implements GeneticAlgorithm
 	//Algorithm parameters
 	int POPULATION_SIZE = 100; 
 	int NUMBER_OF_OFFSPRING = 100;   
-	int NUMBER_OF_GENERATION = 50;
+	int NUMBER_OF_GENERATION = 100;
 	double loadPenaltyFactor = 10;
 	double routeTimePenaltyFactor = 10;
 
@@ -109,14 +110,19 @@ public class Scheme6 implements GeneticAlgorithm
 			parent2 = rouletteWheelSelection.getIndividual(population);
 			
 			offspring1 = new Individual(problemInstance);
+			/*offspring2 = new Individual(problemInstance);
 			
+			
+			Crossover_Uniform_Uniform.crossOver_Uniform_Uniform(problemInstance, parent1, parent2, offspring1, offspring2);*/
 			Uniform_VariedEdgeRecombnation_Crossover.crossOver_Uniform_VariedEdgeRecombination(problemInstance, parent1, parent2, offspring1);
 			
 			
-			mutation.applyMutation(offspring1);
+			//mutation.applyMutation(offspring1);
 			
 			offspringPopulation[i] = offspring1;
 			i++;
+/*			offspringPopulation[i] = offspring2;
+			i++;*/
 			
 			while(i<NUMBER_OF_OFFSPRING)
 			{
@@ -125,18 +131,17 @@ public class Scheme6 implements GeneticAlgorithm
 				
 				offspring1 = new Individual(problemInstance);
 				//offspring2 = new Individual(problemInstance);
-			
+				
 				//Crossover_Uniform_Uniform.crossOver_Uniform_Uniform(problemInstance, parent1, parent2, offspring1, offspring2);	
 				Uniform_VariedEdgeRecombnation_Crossover.crossOver_Uniform_VariedEdgeRecombination(problemInstance, parent1, parent2, offspring1);
 				
-				//System.out.println("off : "+i);
 				//mutation.applyMutation(offspring1);
 				//mutation.applyMutation(offspring2);
 				
 				offspringPopulation[i] = offspring1;
 				i++;
-				//offspringPopulation[i] = offspring2;
-				//i++;
+/*				offspringPopulation[i] = offspring2;
+				i++;*/
 			}
 
 			TotalCostCalculator.calculateCostofPopulation(offspringPopulation, 0,NUMBER_OF_OFFSPRING, loadPenaltyFactor, routeTimePenaltyFactor) ;
@@ -147,7 +152,10 @@ public class Scheme6 implements GeneticAlgorithm
 			{
 				if(parentOffspringTotalPopulation[p].validationTest()==false)
 				{
-					System.out.println("ERROR\nERROR\nERROR\nIndividual is invalid :(!"+" gen : "+generation+"index : "+ p);
+					System.err.println("ERROR\nERROR\nERROR\nIndividual is invalid!!!"+" gen : "+generation+" index : "+ p);
+					out.println("\n\nINVALID INDIVIDUAL : \n");
+					parentOffspringTotalPopulation[p].print();
+					
 					return population[0];
 				}
 				

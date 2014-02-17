@@ -7,6 +7,7 @@ import Main.Solver;
 import Main.Utility;
 import Main.VRP.ProblemInstance;
 import Main.VRP.GeneticAlgorithm.GeneticAlgorithm;
+import Main.VRP.GeneticAlgorithm.PopulationInitiator;
 import Main.VRP.GeneticAlgorithm.TotalCostCalculator;
 import Main.VRP.Individual.Individual;
 
@@ -15,7 +16,7 @@ public class Tester_Initiator  implements GeneticAlgorithm
 {
 	PrintWriter out; 
 	
-	int POPULATION_SIZE = 500;
+	int POPULATION_SIZE = 1000;
 	int NUMBER_OF_OFFSPRING = 10;
 	int NUMBER_OF_GENERATION = 1;
 	
@@ -59,7 +60,12 @@ public class Tester_Initiator  implements GeneticAlgorithm
 		//problemInstance.print();
 		// INITIALISE POPULATION
 		
-		initialisePopulation();
+		//initialisePopulation();
+		
+		Individual.calculateAssignmentProbalityForDiefferentDepot(problemInstance);
+		Individual.calculateProbalityForDiefferentVehicle(problemInstance);
+		PopulationInitiator.initialisePopulation(population, POPULATION_SIZE, problemInstance);
+
 		TotalCostCalculator.calculateCostofPopulation(population,0,POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor);
 		Utility.sort(population);
 
@@ -124,9 +130,9 @@ public class Tester_Initiator  implements GeneticAlgorithm
 		{
 			population[i] = new Individual(problemInstance);
 			population[i].initialise_Closest_Depot_Uniform_Cut();
-			//out.println("Printing Initial individual "+ i +" : \n");
+			out.println("Printing Initial individual "+ i +" : \n");
 			TotalCostCalculator.calculateCost(population[i], loadPenaltyFactor, routeTimePenaltyFactor);
-			//population[i].print();
+			population[i].print();
 		}
 	}
 

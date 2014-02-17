@@ -87,7 +87,7 @@ public class Crossover_Uniform_Uniform
 		
 	}
 		
-	static void crossOver_Uniform_Uniform(ProblemInstance problemInstance,Individual parent1,Individual parent2,Individual child1,Individual child2)
+	public static void crossOver_Uniform_Uniform(ProblemInstance problemInstance,Individual parent1,Individual parent2,Individual child1,Individual child2)
 	{
 		//with 50% probability swap parents
 		int ran = Utility.randomIntInclusive(1);

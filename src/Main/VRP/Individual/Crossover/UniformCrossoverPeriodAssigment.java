@@ -10,10 +10,10 @@ public class UniformCrossoverPeriodAssigment
 	public static  void uniformCrossoverForPeriodAssignment(Individual child1,Individual child2, Individual parent1, Individual parent2,ProblemInstance problemInstance)
 	{
 		int coin;
-		int i;
+		int client;
 		
 		Individual temp1,temp2;
-		for(i=0;i<problemInstance.customerCount;i++)
+		for(client=0;client<problemInstance.customerCount;client++)
 		{
 			coin = Utility.randomIntInclusive(1);
 			
@@ -28,11 +28,13 @@ public class UniformCrossoverPeriodAssigment
 				temp2=child1;
 			}	
 			
+			temp1.visitCombination[client] = parent1.visitCombination[client];
+			temp2.visitCombination[client] = parent2.visitCombination[client];
 			for(int period = 0; period<problemInstance.periodCount; period++)
 			{
 				//if(parent1==null)System.out.print("nul");
-				temp1.periodAssignment[period][i] = parent1.periodAssignment[period][i];
-				temp2.periodAssignment[period][i] = parent2.periodAssignment[period][i];
+				temp1.periodAssignment[period][client] = parent1.periodAssignment[period][client];
+				temp2.periodAssignment[period][client] = parent2.periodAssignment[period][client];
 			}
 		}
 		
@@ -41,25 +43,30 @@ public class UniformCrossoverPeriodAssigment
 	public static  void uniformCrossoverForPeriodAssignment(Individual child, Individual parent1, Individual parent2,ProblemInstance problemInstance)
 	{
 		int coin;
-		int i;
 		
-		Individual temp1,temp2;
-		for(i=0;i<problemInstance.customerCount;i++)
+
+		for(int client=0;client<problemInstance.customerCount;client++)
 		{
 			coin = Utility.randomIntInclusive(1);
 			
+			if(coin==0)
+			{
+				child.visitCombination[client] = parent1.visitCombination[client];
+			}
+			else
+			{
+				child.visitCombination[client] = parent2.visitCombination[client];	
+			}
 			
 			for(int period = 0; period<problemInstance.periodCount; period++)
-			{
-				
+			{	
 				if(coin==0)
 				{
-					child.periodAssignment[period][i] = parent1.periodAssignment[period][i];
-
+					child.periodAssignment[period][client] = parent1.periodAssignment[period][client];
 				}
 				else
 				{
-					child.periodAssignment[period][i] = parent2.periodAssignment[period][i];
+					child.periodAssignment[period][client] = parent2.periodAssignment[period][client];
 				}
 				
 			}

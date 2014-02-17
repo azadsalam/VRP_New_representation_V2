@@ -5,6 +5,7 @@ package Main.VRP.Individual;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 
 import Main.Utility;
@@ -42,6 +43,8 @@ public class Individual
 	static	double closenessToEachDepot[][]=null;
 	static	double cumulativeClosenessToEachDepot[][]=null;
 	
+	
+	public int[] visitCombination;
 	public ProblemInstance problemInstance;
 	
 	
@@ -54,73 +57,67 @@ public class Individual
 		isFeasible = false;	
 	}
 	
+	
+	public void initialisePeriodAssignmentUniformly()
+	{
+/*		for(int client=0; client < problemInstance.customerCount; client++)
+		{
+			int freq,allocated,random;
+			//Randomly allocate period to clients equal to their frequencies
+			
+			freq = problemInstance.frequencyAllocation[client];
+			allocated=0;
+
+			while(allocated!=freq)
+			{
+				random = Utility.randomIntInclusive(problemInstance.periodCount-1);
+				
+				if(periodAssignment[random][client]==false)
+				{
+					periodAssignment[random][client]=true;
+					allocated++;
+				}
+			}
+		}*/
+		
+		for(int client=0; client < problemInstance.customerCount; client++)
+		{
+			ArrayList <Integer> possiblilities =  problemInstance.allPossibleVisitCombinations.get(client);
+
+			
+			int size = possiblilities.size();
+			int ran = Utility.randomIntInclusive(size-1);
+			
+			visitCombination[client] = possiblilities.get(ran);
+			
+			
+			int[] bitArray = problemInstance.toBinaryArray(visitCombination[client]);
+			for(int period = 0;period<problemInstance.periodCount;period++)
+			{
+				boolean bool ;
+				
+				if(bitArray[period]==1) bool = true;
+				else bool = false;
+				
+				periodAssignment[period][client] = bool; 
+			}
+			//System.out.println("At initialisation : Client : "+client+" Combinations " + Arrays.toString(possiblilities.toArray()));
+			//System.out.println("Assigned Combination " + visitCombination[client]);
+					
+		}
+	}
 	public void initialise_Closest_Depot_Greedy_Cut() 
 	{
 		// TODO Auto-generated method stub
 		
-		// NOW INITIALISE WITH VALUES
-		//initialize period assignment
-
-		int freq,allocated,random;
-		//Randomly allocate period to clients equal to their frequencies
-		
-		for(int client=0; client < problemInstance.customerCount; client++)
-		{
-			freq = problemInstance.frequencyAllocation[client];
-			allocated=0;
-
-			while(allocated!=freq)
-			{
-				random = Utility.randomIntInclusive(problemInstance.periodCount-1);
-				
-				if(periodAssignment[random][client]==false)
-				{
-					periodAssignment[random][client]=true;
-					allocated++;
-				}
-			}
-		}
-		
-
-		
-		//assignRoutesWithClosestDepotWithNeighbourCheckHeuristic();
-		
+		initialisePeriodAssignmentUniformly();
 		bigClosestDepotRouteWithGreedyCut();
 		calculateCostAndPenalty();
 	}
-	
-		
 	public void initialise_Closest_Depot_Uniform_Cut() 
 	{
 		// TODO Auto-generated method stub
-		
-		// NOW INITIALISE WITH VALUES
-		//initialize period assignment
-
-		int freq,allocated,random;
-		//Randomly allocate period to clients equal to their frequencies
-		
-		for(int client=0; client < problemInstance.customerCount; client++)
-		{
-			freq = problemInstance.frequencyAllocation[client];
-			allocated=0;
-
-			while(allocated!=freq)
-			{
-				random = Utility.randomIntInclusive(problemInstance.periodCount-1);
-				
-				if(periodAssignment[random][client]==false)
-				{
-					periodAssignment[random][client]=true;
-					allocated++;
-				}
-			}
-		}
-		
-
-		
-		//assignRoutesWithClosestDepotWithNeighbourCheckHeuristic();
-		
+		initialisePeriodAssignmentUniformly();
 		bigClosestDepotRouteWithUniformCut();
 		calculateCostAndPenalty();
 	}
@@ -464,9 +461,7 @@ public class Individual
 		}
 		routes.get(period).get(chosenVehicle).add(chosenInsertPosition, client);
 	}
-
-	
-	private void assignRoutesWithClosestDepotWithNeighbourAndViolationCheckHeuristic()
+    private void assignRoutesWithClosestDepotWithNeighbourAndViolationCheckHeuristic()
 	{
 		//Assign customer to route
 		boolean[] clientMap = new boolean[problemInstance.customerCount];
@@ -807,6 +802,8 @@ public class Individual
 		}
 
 		loadViolation = new double[problemInstance.periodCount][problemInstance.vehicleCount];
+		
+		visitCombination = new int[problemInstance.customerCount];
 	}
 	
 	/** Makes a copy cat individual.Copy Constructor.
@@ -820,6 +817,16 @@ public class Individual
 	{
 		problemInstance = original.problemInstance;
 
+		visitCombination  = new int[problemInstance.customerCount];
+		
+		for(int client=0;client<problemInstance.customerCount;client++)
+		{
+			visitCombination[client] = original.visitCombination[client];
+			//System.out.println("Assigned Combination " + visitCombination[client]);
+			
+		}
+		
+				
 		periodAssignment = new boolean[problemInstance.periodCount][problemInstance.customerCount];
 		for(int i=0;i<problemInstance.periodCount;i++)
 		{
@@ -862,6 +869,8 @@ public class Individual
 		//allocate demanViolationMatrix
 
         loadViolation = new double[problemInstance.periodCount][problemInstance.vehicleCount];
+        
+        
 	}
 	
 	public void copyIndividual(Individual original)
@@ -869,6 +878,14 @@ public class Individual
 		int i,j;
 		problemInstance = original.problemInstance;
 
+		
+		for(int client=0;client<problemInstance.customerCount;client++)
+		{
+			visitCombination[client] = original.visitCombination[client];
+			//System.out.println("Assigned Combination " + visitCombination[client]);
+			
+		}
+		
 		for( i=0;i<problemInstance.periodCount;i++)
 		{
 			for( j=0;j<problemInstance.customerCount;j++)
@@ -995,14 +1012,29 @@ public class Individual
 		int i,j;
 		
 		out.println("PERIOD ASSIGMENT : ");
+		for( j=0;j<problemInstance.customerCount;j++)
+		{
+			out.printf("%3d ",j);	
+		}
+		out.println();
+		
 		for( i=0;i<problemInstance.periodCount;i++)
 		{
 			for( j=0;j<problemInstance.customerCount;j++)
 			{
-				if(periodAssignment[i][j])	out.print("1 ");
-				else out.print("0 ");
+				if(periodAssignment[i][j])	out.printf("  1 ");
+				else out.print("  0 ");
 			}
 			out.println();
+		}
+		
+		out.println("VISIT COMBINATION :");
+		for(int client=0;client<problemInstance.customerCount;client++)
+		{
+			int comb = visitCombination[client];
+			int[] bitArray = problemInstance.toBinaryArray(comb);
+			
+			out.println("Client "+client+" comb : "+comb+" "+ Arrays.toString(bitArray));
 		}
 
 		out.print("Routes : \n");
@@ -1165,6 +1197,24 @@ public class Individual
 			}
 		}
 		
+		// CHECKING IF FREQUENCY COMBINATION IS MET OR NOT
+		for(int client=0;client<problemInstance.customerCount;client++)
+		{
+			int comb = visitCombination[client];
+			int[] bitCOmb = problemInstance.toBinaryArray(comb);
+			
+			for(int period=0;period<problemInstance.periodCount;period++)
+			{
+				if( (bitCOmb[period]==1 && periodAssignment[period][client]==false) ||
+						(bitCOmb[period]==0 && periodAssignment[period][client]==true) )
+				{
+					out.println("Client Frequency Pattern Mismatch - Client : "+client+" period "+period+" Comb : "+comb);
+					result = false;
+				}				
+			}
+		}
+		
+
 		
 		// 2. All client only served once in a period
 		for(int client=0;client<problemInstance.customerCount;client++)

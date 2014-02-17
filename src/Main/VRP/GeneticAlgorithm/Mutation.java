@@ -48,7 +48,7 @@ public class Mutation
 		}
 		else 
 		{
-			MutatePeriodAssignment.mutatePeriodAssignment(offspring);
+		   MutatePeriodAssignment.mutatePeriodAssignment(offspring);
 		}
 		
 		offspring.calculateCostAndPenalty();

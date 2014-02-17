@@ -19,8 +19,8 @@ public class Solver
 {
 	static public Visualiser visualiser;
 	public static boolean showViz=false;
-	String inputFileName = "benchmark/MDVRP/p01";
-	String outputFileName = "benchmark/MDVRP/out02.txt";
+	String inputFileName = "benchmark/MDPVRP/pr10";
+	String outputFileName = "benchmark/MDPVRP/out10.txt";
 	int runSize=5;
 	boolean singleRun = true;
 	
