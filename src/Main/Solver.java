@@ -19,8 +19,8 @@ public class Solver
 {
 	static public Visualiser visualiser;
 	public static boolean showViz=false;
-	String inputFileName = "PVRP/p23.txt";
-	String outputFileName = "PVRP/out23.txt";
+	String inputFileName = "PVRP/p32.txt";
+	String outputFileName = "PVRP/out32.txt";
 	int runSize=5;
 	boolean singleRun = true;
 	
@@ -87,7 +87,8 @@ public class Solver
 		outputToFile = singleRun;
 		generateAggregatedReport = !singleRun;
 		
-		//problemInstance.print();
+		problemInstance.print();
+	
 		
 		if(showViz)
 			visualiser = new Visualiser("original/"+inputFileName.substring(0, inputFileName.length()-4),problemInstance);
