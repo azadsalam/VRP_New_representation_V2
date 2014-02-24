@@ -12,8 +12,8 @@ public class Main_backup
 	{
 		
 		Solver solver = new Solver();
-		solver.initialise();
-		solver.solve();	
+		//solver.initialise();
+		//solver.solve();	
 	}
 
 }

@@ -8,9 +8,9 @@ import Main.VRP.Individual.Individual;
 
 public class Utility 
 {
-	static Random randomGenerator = new Random(System.currentTimeMillis());
+	//static Random randomGenerator = new Random(System.currentTimeMillis());
 	
-	//static Random randomGenerator = new Random(1);
+	static Random randomGenerator = new Random(1);
 
 	static MyComparator mc = new MyComparator();
 	//returns a random numbor between [m,n] 

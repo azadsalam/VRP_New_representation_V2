@@ -3,12 +3,18 @@ package Main;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Scanner;
+
+import javax.rmi.CORBA.Tie;
 
 import Main.VRP.ProblemInstance;
 import Main.VRP.GeneticAlgorithm.GeneticAlgorithm;
 import Main.VRP.GeneticAlgorithm.Scheme6;
+import Main.VRP.GeneticAlgorithm.Scheme6_With_Binary_Tournament;
 import Main.VRP.GeneticAlgorithm.TestAlgo.MutationTest;
+import Main.VRP.GeneticAlgorithm.TestAlgo.TestAlgo;
 import Main.VRP.GeneticAlgorithm.TestAlgo.TestDistance;
 import Main.VRP.GeneticAlgorithm.TestAlgo.Tester_Initiator;
 import Main.VRP.Individual.Individual;
@@ -19,10 +25,21 @@ public class Solver
 {
 	static public Visualiser visualiser;
 	public static boolean showViz=false;
-	String inputFileName = "benchmark/MDPVRP/pr10";
-	String outputFileName = "benchmark/MDPVRP/out10.txt";
-	int runSize=5;
-	boolean singleRun = true;
+	public static boolean printProblemInstance= false;
+	public static boolean onTest=false;
+	String singleInputFileName = "benchmark/MDPVRP/pr10";
+	String singleOutputFileName = "benchmark/MDPVRP/out.txt";
+	String timeStamp = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss").format(Calendar.getInstance().getTime());
+	
+	String reportFileName = "reports/report_"+timeStamp+".csv"; 
+	//String[] instanceFiles={"benchmark/PVRP/p01"};
+	String[] instanceFiles={"benchmark/PVRP/p01","benchmark/PVRP/p13","benchmark/PVRP/p32","benchmark/PVRP/pr06","benchmark/PVRP/pr10"
+			,"benchmark/MDVRP/p01","benchmark/MDVRP/p14","benchmark/MDVRP/p23","benchmark/MDVRP/pr01","benchmark/MDVRP/pr05","benchmark/MDVRP/pr10"
+			,"benchmark/MDPVRP/pr03","benchmark/MDPVRP/pr07","benchmark/MDPVRP/pr10"};
+	
+	
+	int runSize=3;
+	public static boolean singleRun = true;
 	
 	File inputFile,outputFile;	
 	Scanner input;
@@ -30,15 +47,23 @@ public class Solver
 	
 	public static ExportToCSV exportToCsv;
 		
-	ProblemInstance problemInstance;
+	//ProblemInstance problemInstance;
 	
 	public static boolean writeToExcel;
 	public static boolean generateAggregatedReport;
 	public static boolean outputToFile;
 	public static int mutateRouteOfTwoDiefferentFailed=0;
 
-	public void initialise() 
+	/*public void initialise() 
 	{
+		
+	}
+	*/
+
+	
+ 	public ProblemInstance createProblemInstance(String inputFileName, String outputFileName)
+	{
+		ProblemInstance problemInstance=null;
 		try
 		{
 			inputFile = new File(inputFileName);
@@ -61,8 +86,8 @@ public class Solver
 				testCases = input.nextInt(); 
 				input.nextLine(); // escaping comment
 				// FOR NOW IGNORE TEST CASES, ASSUME ONLY ONE TEST CASE
-				output.println("Test cases (Now ignored): "+ testCases);
-				output.flush();
+				//output.println("Test cases (Now ignored): "+ testCases);
+				//output.flush();
 				problemInstance = new ProblemInstance(input,output);
 			}
 		}
@@ -76,13 +101,14 @@ public class Solver
 			System.out.println("EXCEPTION!!\n");
 			e.printStackTrace();
 		}
+		return problemInstance;
 	}
-	
 	
 	public void solve() 
 	{
 		// singlerun = true when excel needs to be generated or output checked for testing
 		// sigleRun = false when aggregated report is to be generated
+		
 		
 		long start,end;
 		
@@ -92,34 +118,40 @@ public class Solver
 		outputToFile = singleRun;
 		generateAggregatedReport = !singleRun;
 		
-		problemInstance.print();
-	
-		//if(true)return;
 		
-		if(showViz)
-			visualiser = new Visualiser("original/"+inputFileName.substring(0, inputFileName.length()-4),problemInstance);
+		if(generateAggregatedReport)
+			generateAggregatedReport();
 		
-		
-		GeneticAlgorithm ga = new Scheme6(problemInstance);		
+		//single run
 		if(writeToExcel) 
 		{
+			ProblemInstance problemInstance = createProblemInstance(singleInputFileName,singleOutputFileName);
+
+			if(printProblemInstance)
+				problemInstance.print();
+			
+			if(showViz)
+				visualiser = new Visualiser("original/"+singleInputFileName.substring(0, singleInputFileName.length()-4),problemInstance);
+
+			GeneticAlgorithm ga;
+			if(!onTest)
+				ga = new Scheme6(problemInstance);		
+			else
+				ga = new TestAlgo(problemInstance);
 			Solver.exportToCsv.init(ga.getNumberOfGeeration()+1);	
 			ga.run();
 			exportToCsv.createCSV();
 		}
 		
-		
-		if(generateAggregatedReport)
-			generateAggregatedReport(ga);
-		
-		
-		System.out.println("mutateTwoDifferentRouteBySwapping Failed : "+mutateRouteOfTwoDiefferentFailed);
+		//System.out.println("mutateTwoDifferentRouteBySwapping Failed : "+mutateRouteOfTwoDiefferentFailed);
 		output.close();
 		
 		end= System.currentTimeMillis();
 		
-		double minute = ((double)end-start) / 1000 / 60;
-		System.out.println("ELAPSED TIME : " + minute);
+		long duration = (end-start) / 1000;
+		long minute =  duration/ 60;
+		long seconds = duration % 60;
+		System.out.println("ELAPSED TIME : " + minute+ " minutes "+seconds+" seconds");
 	}
 	
 	
@@ -159,30 +191,84 @@ public class Solver
 		}
 	}
 	
-	public void generateAggregatedReport(GeneticAlgorithm ga)
+	public void generateAggregatedReport()
 	{
-		double min = 0xFFFFFF;
-		double max = -1;
-		double sum = 0;
-		double avg;
-		int feasibleCount=0;
-
-		for(int i=0; i<runSize; i++)
-		{			
-			Individual sol = ga.run();
-			
-			if(sol.isFeasible==true)
-			{
-				feasibleCount++;
-				sum += sol.cost;
-				if(sol.cost>max) max = sol.cost;
-				if(sol.cost<min) min = sol.cost;
-			}
-				
-		}
-		avg = sum/feasibleCount;
+	
+		long start,end;
 		
-		System.out.format("Min : %f Avg : %f  Max : %f Feasible : %d \n",min,avg,max,feasibleCount);
+		start = System.currentTimeMillis();
+		
+		File reportFile = new File(reportFileName);
+		PrintWriter reportOut=null;
+		
+		boolean once= true;
+		try 
+		{
+			reportOut = new PrintWriter(reportFile);
+		} 
+		catch (FileNotFoundException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//System.out.println(timeStamp );
+		reportOut.println("Report Generation Time , "+timeStamp);
+		
+		for(int instanceNo=0;instanceNo<instanceFiles.length;instanceNo++)
+		{
+			ProblemInstance problemInstance = createProblemInstance(instanceFiles[instanceNo], singleOutputFileName);
+			
+			Scheme6_With_Binary_Tournament ga = new Scheme6_With_Binary_Tournament(problemInstance);
+			
+			if(once)
+			{
+				once=false;
+				reportOut.format("Number Of Generation, Population Size, Offspring Population Size, LoadPenalty, RouteTime Penalty\n");
+				reportOut.format("%d, %d, %d, %f, %f\n",ga.NUMBER_OF_GENERATION,ga.POPULATION_SIZE,ga.NUMBER_OF_OFFSPRING,ga.loadPenaltyFactor,ga.routeTimePenaltyFactor );
+				reportOut.println();
+				
+				reportOut.println();
+				reportOut.format("Instance Name, Min, Avg, Max, Feasible \n");
+
+			}
+			
+			double min = 0xFFFFFF;
+			double max = -1;
+			double sum = 0;
+			double avg;
+			int feasibleCount=0;
+	
+			for(int i=0; i<runSize; i++)
+			{			
+				Individual sol = ga.run();
+				
+				if(sol.isFeasible==true)
+				{
+					feasibleCount++;
+				}
+				sum += sol.costWithPenalty;
+				if(sol.cost>max) max = sol.costWithPenalty;
+				if(sol.cost<min) min = sol.costWithPenalty;
+				
+					
+			}
+			avg = sum/runSize;
+		
+			reportOut.format("%s, %f, %f, %f, %d \n",instanceFiles[instanceNo],min,avg,max,feasibleCount);
+			reportOut.flush();
+			System.out.format("%s, %f, %f, %f, %d \n",instanceFiles[instanceNo],min,avg,max,feasibleCount);
+		}
+		
+		end= System.currentTimeMillis();
+		
+		long duration = (end-start) / 1000;
+		long minute =  duration/ 60;
+		long seconds = duration % 60;
+		
+		reportOut.println("\nELAPSED TIME : " + minute+ " minutes "+seconds+" seconds");
+		reportOut.flush();
+		reportOut.close();
 	}
 	
 	

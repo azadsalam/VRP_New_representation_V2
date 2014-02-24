@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import Main.VRP.ProblemInstance;
 import Main.VRP.GeneticAlgorithm.GeneticAlgorithm;
 import Main.VRP.Individual.Individual;
+import Main.VRP.Individual.RouteUtilities;
+import Main.VRP.Individual.MutationOperators.Two_Opt;
 
 
 public class TestAlgo  implements GeneticAlgorithm
@@ -65,39 +67,18 @@ public class TestAlgo  implements GeneticAlgorithm
 		initialisePopulation();
 //		TotalCostCalculator.calculateCostofPopulation(population,0,POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor);
 	
-		for(i=0;i<POPULATION_SIZE;i++)
-		{
-			if(population[i].validationTest()==false)
-			{
-				System.out.println("INDIVIDUAL NOT VALID");
-			}
-		}
-		for(int generation=0;generation<1;generation++)
-		{
-			for(i=0;i<POPULATION_SIZE;i+=2)
-			{
-				parent1 = population[i];
-				parent2 = population[i+1];
-				
-				offspring1 = new Individual(problemInstance);
-				offspring2 = new Individual(problemInstance);
-			
-			//	Individual.crossOver_Uniform_Uniform(problemInstance, parent1, parent2, offspring1, offspring2);
-				
-				if(offspring1.validationTest()==false)
-				{
-					System.out.println("INDIVIDUAL NOT VALID");
-				}
-				
-				if(offspring2.validationTest()==false)
-				{
-					System.out.println("INDIVIDUAL NOT VALID");
-				}
-				
-				
-			}
-		}
 
+		Individual individual = population[0];
+		
+		individual.print();
+		
+		//System.out.printf(" %f\n", RouteUtilities.costForThisRoute(problemInstance, individual.routes.get(0).get(0), 0 ));
+		Two_Opt.onAllROute(individual);
+		
+		//System.out.println(Two_Opt.twoOptSwap(individual.routes.get(0).get(0), 2, 6).toString());
+		
+		individual.print();
+		
 		return population[0];
 
 	}
@@ -116,7 +97,7 @@ public class TestAlgo  implements GeneticAlgorithm
 			population[i] = new Individual(problemInstance);
 			population[i].initialise_Closest_Depot_Greedy_Cut();
 			//out.println("Printing individual "+ i +" : \n");
-			population[i].print();
+			//population[i].print();
 		}
 	}
 

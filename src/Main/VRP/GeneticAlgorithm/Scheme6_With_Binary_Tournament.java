@@ -13,17 +13,18 @@ import Main.VRP.LocalImprovement.LocalImprovement;
 import Main.VRP.LocalImprovement.LocalImprovementBasedOnFussandElititst;
 import Main.VRP.LocalImprovement.LocalSearch;
 import Main.VRP.LocalImprovement.SimulatedAnnealing;
+import Main.VRP.SelectionOperator.BinaryTournament;
 import Main.VRP.SelectionOperator.FUSS;
 import Main.VRP.SelectionOperator.RoutletteWheelSelection;
 import Main.VRP.SelectionOperator.SelectionOperator;
 
 
-public class Scheme6 implements GeneticAlgorithm
+public class Scheme6_With_Binary_Tournament implements GeneticAlgorithm
 {
 	//Algorithm parameters
-	public static int POPULATION_SIZE = 200; 
-	public static int NUMBER_OF_OFFSPRING = 200;   
-	public static int NUMBER_OF_GENERATION = 200;
+	public static int POPULATION_SIZE = 100; 
+	public static int NUMBER_OF_OFFSPRING = 100;   
+	public static int NUMBER_OF_GENERATION = 100;
 	public static double loadPenaltyFactor = 10;
 	public static double routeTimePenaltyFactor = 10;
 
@@ -34,8 +35,9 @@ public class Scheme6 implements GeneticAlgorithm
 
 	//Operators
 	Mutation mutation;
-    SelectionOperator rouletteWheelSelection;
-    SelectionOperator fussSelection;
+    //SelectionOperator rouletteWheelSelection;
+    //SelectionOperator fussSelection;
+	SelectionOperator binaryTournament;
     SelectionOperator survivalSelectionOperator;
     LocalImprovement localImprovement;
     LocalSearch localSearch;
@@ -49,7 +51,7 @@ public class Scheme6 implements GeneticAlgorithm
 	
 
 	
-	public Scheme6(ProblemInstance problemInstance) 
+	public Scheme6_With_Binary_Tournament(ProblemInstance problemInstance) 
 	{
 		// TODO Auto-generated constructor stub
 		this.problemInstance = problemInstance;
@@ -63,8 +65,9 @@ public class Scheme6 implements GeneticAlgorithm
 		parentOffspringTotalPopulation = new Individual[POPULATION_SIZE + NUMBER_OF_OFFSPRING];
 		
 		//Add additional code here
-		rouletteWheelSelection = new RoutletteWheelSelection();
-	    fussSelection = new FUSS();
+		//rouletteWheelSelection = new RoutletteWheelSelection();
+	    //fussSelection = new FUSS();
+		binaryTournament = new BinaryTournament();
 		survivalSelectionOperator = new FUSS(); 
 
 		localSearch = new FirstChoiceHillClimbing();
@@ -98,14 +101,14 @@ public class Scheme6 implements GeneticAlgorithm
 			//  Best individual always reproduces K=1 times + roulette wheel
 			
 			
-			fussSelection.initialise(population, false);
-			rouletteWheelSelection.initialise(population, false);
-			
+			//fussSelection.initialise(population, false);
+			//rouletteWheelSelection.initialise(population, false);
+			binaryTournament.initialise(population, false);
 			i=0;
 			
 			
 			parent1 = population[0];
-			parent2 = rouletteWheelSelection.getIndividual(population);
+			parent2 = binaryTournament.getIndividual(population);
 			
 			offspring1 = new Individual(problemInstance);
 			/*offspring2 = new Individual(problemInstance);
@@ -124,8 +127,8 @@ public class Scheme6 implements GeneticAlgorithm
 			
 			while(i<NUMBER_OF_OFFSPRING)
 			{
-				parent1 = rouletteWheelSelection.getIndividual(population);
-				parent2 = fussSelection.getIndividual(population);
+				parent1 = binaryTournament.getIndividual(population);
+				parent2 = binaryTournament.getIndividual(population);
 				
 				offspring1 = new Individual(problemInstance);
 				//offspring2 = new Individual(problemInstance);

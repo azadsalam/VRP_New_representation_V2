@@ -113,4 +113,54 @@ public class RouteUtilities
 	
 	}
 
+	
+	public static double costForSingleRoute(Individual individual, int period, int vehicle)
+	{
+		int assignedDepot;		
+		int clientNode,previous;
+
+		ArrayList<Integer> route = individual.routes.get(period).get(vehicle);
+		assignedDepot = individual.problemInstance.depotAllocation[vehicle];
+		ProblemInstance problemInstance = individual.problemInstance;
+		if(route.isEmpty())return 0;
+
+		double costForPV = 0;
+		
+		for(int i=1;i<route.size();i++)
+		{
+			clientNode = route.get(i);
+			previous = route.get(i-1);
+			costForPV +=	problemInstance.costMatrix[previous+problemInstance.depotCount][clientNode+problemInstance.depotCount];
+		}
+
+        costForPV += problemInstance.costMatrix[assignedDepot][route.get(0)+problemInstance.depotCount];
+        costForPV += problemInstance.costMatrix[route.get(route.size()-1)+problemInstance.depotCount][assignedDepot];
+
+		return costForPV;
+
+	}
+	
+	public static double costForThisRoute(ProblemInstance problemInstance, ArrayList<Integer> route, int vehicle)
+	{
+		int assignedDepot;		
+		int clientNode,previous;
+
+		assignedDepot = problemInstance.depotAllocation[vehicle];
+		if(route.isEmpty())return 0;
+
+		double costForPV = 0;
+		
+		for(int i=1;i<route.size();i++)
+		{
+			clientNode = route.get(i);
+			previous = route.get(i-1);
+			costForPV +=	problemInstance.costMatrix[previous+problemInstance.depotCount][clientNode+problemInstance.depotCount];
+		}
+
+        costForPV += problemInstance.costMatrix[assignedDepot][route.get(0)+problemInstance.depotCount];
+        costForPV += problemInstance.costMatrix[route.get(route.size()-1)+problemInstance.depotCount][assignedDepot];
+
+		return costForPV;
+
+	}
 }

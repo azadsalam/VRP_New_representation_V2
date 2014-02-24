@@ -14,7 +14,7 @@ public class Main
 		
 		
 		final Solver solver = new Solver();
-		solver.initialise();
+		//solver.initialise();
 		Thread thread1=new Thread() {			
 			@Override
 			public void run() {

@@ -5,6 +5,8 @@ import Main.VRP.Individual.MutationOperators.InsertionMutation;
 import Main.VRP.Individual.MutationOperators.InsertionMutationGreedy;
 import Main.VRP.Individual.MutationOperators.MutatePeriodAssignment;
 import Main.VRP.Individual.MutationOperators.MutateVehicleAssignmentGreedy;
+import Main.VRP.Individual.MutationOperators.SwapMutation;
+import Main.VRP.Individual.MutationOperators.Two_Opt;
 
 
 public class Mutation 
@@ -23,14 +25,14 @@ public class Mutation
 	
 	public void applyMutation(Individual offspring)
 	{
-		int rand = 4;
+		int rand = 5;
 		if(offspring.problemInstance.periodCount==1)rand--;
 		
 		int selectedMutationOperator = Utility.randomIntInclusive(rand);
 		
 		if(selectedMutationOperator==0)
 		{
-			offspring.mutateRouteBySwapping();
+			SwapMutation.mutate(offspring);
 		}
 		else if (selectedMutationOperator == 1)
 		{			
@@ -46,6 +48,12 @@ public class Mutation
 			//offspring.mutateTwoDifferentRouteBySubstitution();
 			MutateVehicleAssignmentGreedy.mutate(offspring);
 		}
+		else if (selectedMutationOperator == 4)
+		{
+			//offspring.mutateTwoDifferentRouteBySubstitution();
+			Two_Opt.onAllROute(offspring);
+		}
+		
 		else 
 		{
 		   MutatePeriodAssignment.mutatePeriodAssignment(offspring);
