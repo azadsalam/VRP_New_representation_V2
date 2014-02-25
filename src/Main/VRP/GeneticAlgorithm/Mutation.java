@@ -51,7 +51,8 @@ public class Mutation
 		else if (selectedMutationOperator == 4)
 		{
 			//offspring.mutateTwoDifferentRouteBySubstitution();
-			Two_Opt.onAllROute(offspring);
+			//Two_Opt.onAllROute(offspring);
+			Two_Opt.mutateRandomRoute(offspring);
 		}
 		
 		else 

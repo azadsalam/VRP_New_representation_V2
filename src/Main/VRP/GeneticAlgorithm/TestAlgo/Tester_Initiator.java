@@ -10,14 +10,15 @@ import Main.VRP.GeneticAlgorithm.GeneticAlgorithm;
 import Main.VRP.GeneticAlgorithm.PopulationInitiator;
 import Main.VRP.GeneticAlgorithm.TotalCostCalculator;
 import Main.VRP.Individual.Individual;
+import Main.VRP.Individual.Initialise_ClosestDepot_withNoLoadViolation_Uniform_cut;
 
 
 public class Tester_Initiator  implements GeneticAlgorithm
 {
 	PrintWriter out; 
 	
-	int POPULATION_SIZE = 1000;
-	int NUMBER_OF_OFFSPRING = 10;
+	int POPULATION_SIZE = 1;
+	int NUMBER_OF_OFFSPRING = 1;
 	int NUMBER_OF_GENERATION = 1;
 	
 	ProblemInstance problemInstance;
@@ -62,10 +63,8 @@ public class Tester_Initiator  implements GeneticAlgorithm
 		
 		//initialisePopulation();
 		
-		Individual.calculateAssignmentProbalityForDiefferentDepot(problemInstance);
-		Individual.calculateProbalityForDiefferentVehicle(problemInstance);
-		PopulationInitiator.initialisePopulation(population, POPULATION_SIZE, problemInstance);
-
+		System.out.println("IN INITIATOR TESTER");
+		initialisePopulation();
 		TotalCostCalculator.calculateCostofPopulation(population,0,POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor);
 		Utility.sort(population);
 
@@ -83,7 +82,7 @@ public class Tester_Initiator  implements GeneticAlgorithm
 			total +=  population[i].costWithPenalty;
 			
 		}
-		
+		double infeasiblePercent=0;
 
 		int invalid = 0;
 		int infeasible = 0;
@@ -103,7 +102,7 @@ public class Tester_Initiator  implements GeneticAlgorithm
 			population[i].print();
 		}
 		
-		double infeasiblePercent= ((double)infeasible*100/POPULATION_SIZE);
+		 infeasiblePercent= ((double)infeasible*100/POPULATION_SIZE);
 		
 		//System.out.printf("Max : %d Avg : %f Count : %d \n",Individual.max,(double)Individual.total/Individual.count,Individual.count);
 		System.out.println("Best : "+min +" avg : "+(total/POPULATION_SIZE)+" worst : "+max+ "Infeasible : "+infeasiblePercent+"%  invalid : "+invalid);
@@ -117,10 +116,6 @@ public class Tester_Initiator  implements GeneticAlgorithm
 	}
 	
 	
-	
-
-	
-	
 	void initialisePopulation()
 	{
 		Individual.calculateAssignmentProbalityForDiefferentDepot(problemInstance);
@@ -129,7 +124,8 @@ public class Tester_Initiator  implements GeneticAlgorithm
 		for(int i=0; i<POPULATION_SIZE; i++)
 		{
 			population[i] = new Individual(problemInstance);
-			population[i].initialise_Closest_Depot_Uniform_Cut();
+			//population[i].initialise_Closest_Depot_Uniform_Cut();
+			Initialise_ClosestDepot_withNoLoadViolation_Uniform_cut.initiialise(population[i]);
 			out.println("Printing Initial individual "+ i +" : \n");
 			TotalCostCalculator.calculateCost(population[i], loadPenaltyFactor, routeTimePenaltyFactor);
 			population[i].print();

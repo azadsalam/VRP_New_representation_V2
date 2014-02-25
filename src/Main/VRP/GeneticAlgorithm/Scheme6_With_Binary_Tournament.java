@@ -6,6 +6,7 @@ import Main.Solver;
 import Main.Utility;
 import Main.VRP.ProblemInstance;
 import Main.VRP.Individual.Individual;
+import Main.VRP.Individual.Initialise_ClosestDepot_GreedyCut;
 import Main.VRP.Individual.Crossover.Crossover_Uniform_Uniform;
 import Main.VRP.Individual.Crossover.Uniform_VariedEdgeRecombnation_Crossover;
 import Main.VRP.LocalImprovement.FirstChoiceHillClimbing;
@@ -177,7 +178,8 @@ public class Scheme6_With_Binary_Tournament implements GeneticAlgorithm
 					if(Individual.isDuplicate(problemInstance, parentOffspringTotalPopulation[p], parentOffspringTotalPopulation[p+1]))
 					{
 						parentOffspringTotalPopulation[p] = new Individual(problemInstance);
-						parentOffspringTotalPopulation[p].initialise_Closest_Depot_Greedy_Cut();
+//						parentOffspringTotalPopulation[p].initialise_Closest_Depot_Greedy_Cut();
+						Initialise_ClosestDepot_GreedyCut.initialise(parentOffspringTotalPopulation[p]);
 						TotalCostCalculator.calculateCost(parentOffspringTotalPopulation[p], loadPenaltyFactor, routeTimePenaltyFactor);
 						//parentOffspringTotalPopulation[p].calculateCostAndPenalty();
 						//System.out.println("DUPLICATE");

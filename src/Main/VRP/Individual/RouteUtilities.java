@@ -163,4 +163,57 @@ public class RouteUtilities
 		return costForPV;
 
 	}
+	
+	public static int closestDepot(int client)
+	{
+		ProblemInstance problemInstance = Individual.getProblemInstance();
+		int clientIndex = problemInstance.depotCount + client;
+		
+		int selectedDepot=0;
+		double minDistance = problemInstance.costMatrix[0][clientIndex] + problemInstance.costMatrix[clientIndex][0];
+		minDistance /=2;
+		
+		for(int depot=1;depot<problemInstance.depotCount;depot++)
+		{
+			double distance = problemInstance.costMatrix[depot][clientIndex] + problemInstance.costMatrix[clientIndex][depot];
+			distance /= 2;
+			if(distance <= minDistance)
+			{
+				selectedDepot = depot;
+				minDistance = distance;
+			}
+		}
+		return selectedDepot ;
+	}
+	
+	/**
+	 * Returns K depots, sorted in ascending order with distance to customer client
+	 * @param client
+	 * @param k
+	 * @return
+	 */
+	public static ArrayList<Integer> closestDepots(int client)
+	{
+		ProblemInstance problemInstance = Individual.getProblemInstance();
+		int clientIndex = problemInstance.depotCount + client;
+		
+		ArrayList<Integer> selectedDepot= new ArrayList<Integer>();
+		ArrayList<Double> distances = new ArrayList<Double>();
+		//double minDistance = problemInstance.costMatrix[0][clientIndex] + problemInstance.costMatrix[clientIndex][0];
+		//minDistance /=2;
+		
+		double minDistance = Double.MAX_VALUE;
+		for(int depot=0;depot<problemInstance.depotCount;depot++)
+		{
+			double distance = problemInstance.costMatrix[depot][clientIndex] + problemInstance.costMatrix[clientIndex][depot];
+			distance /= 2;
+			
+			int i=0;
+			while(i<distances.size() && distances.get(i) <= distance) i++;
+			
+			distances.add(i, distance);
+			selectedDepot.add(i,depot);
+		}
+		return selectedDepot ;
+	}
 }

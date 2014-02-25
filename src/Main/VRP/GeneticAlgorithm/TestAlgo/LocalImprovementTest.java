@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import Main.Utility;
 import Main.VRP.ProblemInstance;
 import Main.VRP.GeneticAlgorithm.GeneticAlgorithm;
+import Main.VRP.GeneticAlgorithm.PopulationInitiator;
 import Main.VRP.GeneticAlgorithm.TotalCostCalculator;
 import Main.VRP.Individual.Individual;
 import Main.VRP.LocalImprovement.FirstChoiceHillClimbing;
@@ -67,7 +68,7 @@ public class LocalImprovementTest  implements GeneticAlgorithm
 		
 		
 		// INITIALISE POPULATION
-		initialisePopulation();
+		PopulationInitiator.initialisePopulation(population, POPULATION_SIZE, problemInstance);
 		TotalCostCalculator.calculateCostofPopulation(population,0,POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor);
 	
 		LocalImprovement li = new LocalImprovementBasedOnFussandElititst(loadPenaltyFactor, routeTimePenaltyFactor, new FirstChoiceHillClimbing(),POPULATION_SIZE);
@@ -109,19 +110,6 @@ public class LocalImprovementTest  implements GeneticAlgorithm
 
 	}
 	
-	
-	void initialisePopulation()
-	{
-		//out.print("Initial population : \n");
-		for(int i=0; i<POPULATION_SIZE; i++)
-		{
-			population[i] = new Individual(problemInstance);
-			population[i].initialise_Closest_Depot_Greedy_Cut();
-			//out.println("Printing individual "+ i +" : \n");
-			//population[i].print();
-		}
-	}
-
 	@Override
 	public int getNumberOfGeeration() {
 		// TODO Auto-generated method stub

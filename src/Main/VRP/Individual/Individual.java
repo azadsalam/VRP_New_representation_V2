@@ -45,7 +45,7 @@ public class Individual
 	
 	
 	public int[] visitCombination;
-	public ProblemInstance problemInstance;
+	public static ProblemInstance problemInstance;
 	
 	
 	ArrayList<ArrayList<ArrayList<Integer>>> bigRoutes;
@@ -57,268 +57,13 @@ public class Individual
 		isFeasible = false;	
 	}
 	
-	
-	public void initialisePeriodAssignmentUniformly()
+	public static ProblemInstance getProblemInstance()
 	{
-/*		for(int client=0; client < problemInstance.customerCount; client++)
-		{
-			int freq,allocated,random;
-			//Randomly allocate period to clients equal to their frequencies
-			
-			freq = problemInstance.frequencyAllocation[client];
-			allocated=0;
-
-			while(allocated!=freq)
-			{
-				random = Utility.randomIntInclusive(problemInstance.periodCount-1);
-				
-				if(periodAssignment[random][client]==false)
-				{
-					periodAssignment[random][client]=true;
-					allocated++;
-				}
-			}
-		}*/
-		
-		for(int client=0; client < problemInstance.customerCount; client++)
-		{
-			ArrayList <Integer> possiblilities =  problemInstance.allPossibleVisitCombinations.get(client);
-
-			
-			int size = possiblilities.size();
-			int ran = Utility.randomIntInclusive(size-1);
-			
-			visitCombination[client] = possiblilities.get(ran);
-			
-			
-			int[] bitArray = problemInstance.toBinaryArray(visitCombination[client]);
-			for(int period = 0;period<problemInstance.periodCount;period++)
-			{
-				boolean bool ;
-				
-				if(bitArray[period]==1) bool = true;
-				else bool = false;
-				
-				periodAssignment[period][client] = bool; 
-			}
-			//System.out.println("At initialisation : Client : "+client+" Combinations " + Arrays.toString(possiblilities.toArray()));
-			//System.out.println("Assigned Combination " + visitCombination[client]);
-					
-		}
-	}
-	public void initialise_Closest_Depot_Greedy_Cut() 
-	{
-		// TODO Auto-generated method stub
-		
-		initialisePeriodAssignmentUniformly();
-		bigClosestDepotRouteWithGreedyCut();
-		calculateCostAndPenalty();
-	}
-	public void initialise_Closest_Depot_Uniform_Cut() 
-	{
-		// TODO Auto-generated method stub
-		initialisePeriodAssignmentUniformly();
-		bigClosestDepotRouteWithUniformCut();
-		calculateCostAndPenalty();
+		return problemInstance;
 	}
 
-	private void bigClosestDepotRouteWithUniformCut()
-	{
-		//Assign customer to route
-		boolean[] clientMap = new boolean[problemInstance.customerCount];
 		
-		int assigned=0;
-		bigRoutes = new ArrayList<ArrayList<ArrayList<Integer>>>();
-		
-		for(int period=0;period<problemInstance.periodCount;period++)
-		{
-			bigRoutes.add(new ArrayList<ArrayList<Integer>>());
-			for(int depot=0;depot<problemInstance.depotCount;depot++)
-			{
-				bigRoutes.get(period).add(new ArrayList<Integer>());
-			}
-		}
-		
-		//create big routes
-		while(assigned<problemInstance.customerCount)
-		{
-			int clientNo = Utility.randomIntInclusive(problemInstance.customerCount-1);
-			if(clientMap[clientNo]) continue;
-			clientMap[clientNo]=true;
-			assigned++;
-			
-			
-			for(int period=0;period<problemInstance.periodCount;period++)
-			{		
-				if(periodAssignment[period][clientNo]==false)continue;
-
-				int depot = closestDepot(clientNo);	
-				insertIntoBigClosestDepotRoute(clientNo, depot, period);
-			}			
-		}
-		
-		//now cut the routes and distribute to vehicles
-		for(int period=0; period<problemInstance.periodCount;period++)
-		{
-			for(int depot=0; depot<problemInstance.depotCount;depot++)
-			{
-
-				uniformCut(period, depot);
-				/*int vehicle = problemInstance.vehiclesUnderThisDepot.get(depot).get(0);
-				ArrayList<Integer >route = routes.get(period).get(vehicle);
-				route.clear();
-				route.addAll(bigRoutes.get(period).get(depot));*/
-				
-			}
-		}
-	}
-	
-	private void uniformCut(int period,int depot) 
-	{
-		ArrayList<Integer> bigRoute = bigRoutes.get(period).get(depot);		
-		ArrayList<Integer> vehicles = problemInstance.vehiclesUnderThisDepot.get(depot);
-		
-		int currentVehicleIndex = 0;
-		int bigRouteSize = bigRoute.size();
-		int clientPerVehicle = bigRouteSize/vehicles.size();
-		
-		for(currentVehicleIndex=0;currentVehicleIndex<vehicles.size();currentVehicleIndex++)
-		{
-			for(int i=0;i<clientPerVehicle;i++)
-			{
-				int vehicle = vehicles.get(currentVehicleIndex);
-				int client = bigRoute.get(0);
-				routes.get(period).get(vehicle).add(client);
-				bigRoute.remove(0);
-			}
-		}
-		
-		if(!bigRoute.isEmpty())
-		{
-			
-			while(!bigRoute.isEmpty())
-			{
-				int client = bigRoute.get(0);
-				int vehicle = vehicles.get(vehicles.size()-1);
-				
-				routes.get(period).get(vehicle).add(client);
-				bigRoute.remove(0);
-			}
-		}
-
-		
-
-	}
-
-	private void bigClosestDepotRouteWithGreedyCut()
-	{
-		//Assign customer to route
-		boolean[] clientMap = new boolean[problemInstance.customerCount];
-		
-		int assigned=0;
-		
-		bigRoutes = new ArrayList<ArrayList<ArrayList<Integer>>>();
-		
-		for(int period=0;period<problemInstance.periodCount;period++)
-		{
-			bigRoutes.add(new ArrayList<ArrayList<Integer>>());
-			
-			for(int depot=0;depot<problemInstance.depotCount;depot++)
-			{
-				bigRoutes.get(period).add(new ArrayList<Integer>());
-			}
-		}
-		
-		
-		//create big routes
-		while(assigned<problemInstance.customerCount)
-		{
-			int clientNo = Utility.randomIntInclusive(problemInstance.customerCount-1);
-			if(clientMap[clientNo]) continue;
-			clientMap[clientNo]=true;
-			assigned++;
-			
-			
-			for(int period=0;period<problemInstance.periodCount;period++)
-			{		
-				if(periodAssignment[period][clientNo]==false)continue;
-
-				int depot = closestDepot(clientNo);	
-				insertIntoBigClosestDepotRoute(clientNo, depot, period);
-			}			
-		}
-		
-		//now cut the routes and distribute to vehicles
-		for(int period=0; period<problemInstance.periodCount;period++)
-		{
-			for(int depot=0; depot<problemInstance.depotCount;depot++)
-			{
-
-				greedyCutWithMinimumViolation(period, depot);
-				/*int vehicle = problemInstance.vehiclesUnderThisDepot.get(depot).get(0);
-				ArrayList<Integer >route = routes.get(period).get(vehicle);
-				route.clear();
-				route.addAll(bigRoutes.get(period).get(depot));*/
-				
-			}
-		}
-	}
-	
-	private void greedyCutWithMinimumViolation(int period,int depot) 
-	{
-		ArrayList<Integer> bigRoute = bigRoutes.get(period).get(depot);		
-		ArrayList<Integer> vehicles = problemInstance.vehiclesUnderThisDepot.get(depot);
-		
-		
-		int currentVehicleIndex = 0;
-		double currentLoad=0;
-		
-		while(!bigRoute.isEmpty() && currentVehicleIndex <vehicles.size())
-		{
-			int vehicle = vehicles.get(currentVehicleIndex);
-			int client = bigRoute.get(0);
-			
-			double thisCapacity = problemInstance.loadCapacity[vehicle];
-			double thisClientDemand = problemInstance.demand[client];
-			
-			double loadViolation = (currentLoad+thisClientDemand) - (thisCapacity);
-			
-			if(loadViolation <= 0) //add this client to this vehicle route, update info
-			{
-				routes.get(period).get(vehicle).add(client);
-				currentLoad += thisClientDemand;
-				bigRoute.remove(0);
-			}
-			else
-			{
-				currentVehicleIndex++;
-				currentLoad=0;
-			}
-		}
-		
-		if(!bigRoute.isEmpty())
-		{
-			
-			//BOOK KEEPING 
-			int left = bigRoute.size();
-			if(left>max)max=left;
-			count++;
-			total+=left;
-			///////
-			
-			//System.out.println("LEFT : "+bigRoute.size());
-			while(!bigRoute.isEmpty())
-			{
-				int client = bigRoute.get(0);
-				int vehicle = vehicles.get(vehicles.size()-1);
-				
-				routes.get(period).get(vehicle).add(client);
-				bigRoute.remove(0);
-			}
-		}
-	}
-	
-	private void insertIntoBigClosestDepotRoute(int client,int depot,int period)
+	public void insertIntoBigClosestDepotRoute(int client,int depot,int period)
 	{
 		double min = 99999999;
 		int chosenInsertPosition =- 1;
@@ -389,7 +134,7 @@ public class Individual
 			{		
 				if(periodAssignment[period][clientNo]==false)continue;
 
-				int depot = closestDepot(clientNo);	
+				int depot = RouteUtilities.closestDepot(clientNo);	
 				insertClientToRouteThatMinimizesTheIncreaseInActualCost(clientNo, depot, period);
 			}			
 		}
@@ -480,7 +225,7 @@ public class Individual
 			{		
 				if(periodAssignment[period][clientNo]==false)continue;
 
-				int depot = closestDepot(clientNo);	
+				int depot = RouteUtilities.closestDepot(clientNo);	
 				insertClientToRouteThatMinimizesTheIncreaseInActualCostAndCheckViolation(clientNo, depot, period);
 			}			
 		}
@@ -628,26 +373,7 @@ public class Individual
 	////////////////
 
 	
-	private int closestDepot(int client)
-	{
-		int clientIndex = problemInstance.depotCount + client;
-		
-		int selectedDepot=0;
-		double minDistance = problemInstance.costMatrix[0][clientIndex] + problemInstance.costMatrix[clientIndex][0];
-		minDistance /=2;
-		
-		for(int depot=1;depot<problemInstance.depotCount;depot++)
-		{
-			double distance = problemInstance.costMatrix[depot][clientIndex] + problemInstance.costMatrix[clientIndex][depot];
-			distance /= 2;
-			if(distance <= minDistance)
-			{
-				selectedDepot = depot;
-				minDistance = distance;
-			}
-		}
-		return selectedDepot ;
-	}
+	
 	
 	private int closestDepot2(int client)
 	{

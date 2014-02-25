@@ -143,7 +143,7 @@ public class MutationTest  implements GeneticAlgorithm
 		for(int i=0; i<POPULATION_SIZE; i++)
 		{
 			population[i] = new Individual(problemInstance);
-			population[i].initialise_Closest_Depot_Greedy_Cut();
+	//		population[i].initialise_Closest_Depot_Greedy_Cut();
 			//out.println("Printing individual "+ i +" : \n");
 			//population[i].print();
 		}

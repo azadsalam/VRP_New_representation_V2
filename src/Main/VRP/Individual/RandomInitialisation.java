@@ -17,8 +17,7 @@ public class RandomInitialisation
 		//Randomly allocate period to clients equal to their frequencies
 
 		ProblemInstance problemInstance = individual.problemInstance;
-		individual.initialisePeriodAssignmentUniformly();
-
+		InitialisePeriodAssigmentUniformly.initialise(individual);
 		//Assign customer to route
 		for(int clientNo=0;clientNo<problemInstance.customerCount;clientNo++)
 		{

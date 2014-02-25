@@ -11,13 +11,15 @@ public class Two_Opt {
 	public static void mutateRandomRoute(Individual individual)
 	{
 		ProblemInstance problemInstance = individual.problemInstance;
-		boolean success = false;
-		do
-		{
+		//boolean success = false;
+		//do
+		//{
 			int period = Utility.randomIntInclusive(problemInstance.periodCount-1);
 			int vehicle = Utility.randomIntInclusive(problemInstance.vehicleCount-1);
-			success = mutateRouteBy2_Opt(individual,period, vehicle);
-		}while(success==false);
+			mutateRouteBy2_Opt(individual, period, vehicle);
+			
+			//success = mutateRouteBy2_Opt(individual,period, vehicle);
+		//}while(success==false);
 	}
 	
 	public static void onAllROute(Individual individual)

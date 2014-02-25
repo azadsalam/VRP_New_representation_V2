@@ -6,6 +6,7 @@ import Main.Solver;
 import Main.Utility;
 import Main.VRP.ProblemInstance;
 import Main.VRP.Individual.Individual;
+import Main.VRP.Individual.Initialise_ClosestDepot_GreedyCut;
 import Main.VRP.Individual.Crossover.Crossover_Uniform_Uniform;
 import Main.VRP.Individual.Crossover.Uniform_VariedEdgeRecombnation_Crossover;
 import Main.VRP.LocalImprovement.FirstChoiceHillClimbing;
@@ -21,9 +22,9 @@ import Main.VRP.SelectionOperator.SelectionOperator;
 public class Scheme6 implements GeneticAlgorithm
 {
 	//Algorithm parameters
-	public static int POPULATION_SIZE = 200; 
-	public static int NUMBER_OF_OFFSPRING = 200;   
-	public static int NUMBER_OF_GENERATION = 200;
+	public static int POPULATION_SIZE = 100; 
+	public static int NUMBER_OF_OFFSPRING = 100;   
+	public static int NUMBER_OF_GENERATION = 100;
 	public static double loadPenaltyFactor = 10;
 	public static double routeTimePenaltyFactor = 10;
 
@@ -174,7 +175,8 @@ public class Scheme6 implements GeneticAlgorithm
 					if(Individual.isDuplicate(problemInstance, parentOffspringTotalPopulation[p], parentOffspringTotalPopulation[p+1]))
 					{
 						parentOffspringTotalPopulation[p] = new Individual(problemInstance);
-						parentOffspringTotalPopulation[p].initialise_Closest_Depot_Greedy_Cut();
+						Initialise_ClosestDepot_GreedyCut.initialise(parentOffspringTotalPopulation[p]);
+						//.initialise_Closest_Depot_Greedy_Cut();
 						TotalCostCalculator.calculateCost(parentOffspringTotalPopulation[p], loadPenaltyFactor, routeTimePenaltyFactor);
 						//parentOffspringTotalPopulation[p].calculateCostAndPenalty();
 						//System.out.println("DUPLICATE");
