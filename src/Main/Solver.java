@@ -20,7 +20,6 @@ import Main.VRP.GeneticAlgorithm.TestAlgo.Tester_Initiator;
 import Main.VRP.Individual.Individual;
 
 
-
 public class Solver 
 {
 	static public Visualiser visualiser;
@@ -53,12 +52,6 @@ public class Solver
 	public static boolean generateAggregatedReport;
 	public static boolean outputToFile;
 	public static int mutateRouteOfTwoDiefferentFailed=0;
-
-	/*public void initialise() 
-	{
-		
-	}
-	*/
 
 	
  	public ProblemInstance createProblemInstance(String inputFileName, String outputFileName)
