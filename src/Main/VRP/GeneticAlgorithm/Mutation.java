@@ -1,11 +1,13 @@
 package Main.VRP.GeneticAlgorithm;
 import Main.Utility;
 import Main.VRP.Individual.Individual;
-import Main.VRP.Individual.MutationOperators.InsertionMutation;
-import Main.VRP.Individual.MutationOperators.InsertionMutationGreedy;
+import Main.VRP.Individual.MutationOperators.IntraRouteRandomInsertion;
+import Main.VRP.Individual.MutationOperators.IntraRouteGreedyInsertion;
 import Main.VRP.Individual.MutationOperators.MutatePeriodAssignment;
-import Main.VRP.Individual.MutationOperators.MutateVehicleAssignmentGreedy;
-import Main.VRP.Individual.MutationOperators.SwapMutation;
+import Main.VRP.Individual.MutationOperators.GreedyVehicleReAssignment;
+import Main.VRP.Individual.MutationOperators.IntraRouteRandomSwap;
+import Main.VRP.Individual.MutationOperators.OneOneExchange;
+import Main.VRP.Individual.MutationOperators.OneZeroExchange;
 import Main.VRP.Individual.MutationOperators.Two_Opt;
 
 
@@ -25,41 +27,41 @@ public class Mutation
 	
 	public void applyMutation(Individual offspring)
 	{
-		int rand = 5;
+		int rand = 6;
 		if(offspring.problemInstance.periodCount==1)rand--;
 		
 		int selectedMutationOperator = Utility.randomIntInclusive(rand);
 		
 		if(selectedMutationOperator==0)
 		{
-			SwapMutation.mutate(offspring);
+			IntraRouteGreedyInsertion.mutate(offspring);
 		}
 		else if (selectedMutationOperator == 1)
 		{			
-			InsertionMutationGreedy.mutate(offspring);
+			GreedyVehicleReAssignment.mutate(offspring);
 		}
 		else if (selectedMutationOperator == 2)
 		{
-			InsertionMutation.mutateRouteWithInsertion(offspring);
+			OneZeroExchange.mutate(offspring);
 //			offspring.mutateRouteWithInsertion();
 		}
 		else if (selectedMutationOperator == 3)
 		{
 			//offspring.mutateTwoDifferentRouteBySubstitution();
-			MutateVehicleAssignmentGreedy.mutate(offspring);
+			IntraRouteRandomInsertion.mutate(offspring);
 		}
 		else if (selectedMutationOperator == 4)
 		{
-			//offspring.mutateTwoDifferentRouteBySubstitution();
-			//Two_Opt.onAllROute(offspring);
 			Two_Opt.mutateRandomRoute(offspring);
 		}
-		
+		else if (selectedMutationOperator == 5)
+		{
+			OneOneExchange.mutate(offspring);
+		}
 		else 
 		{
 		   MutatePeriodAssignment.mutatePeriodAssignment(offspring);
 		}
-		
 		offspring.calculateCostAndPenalty();
 		
 	}

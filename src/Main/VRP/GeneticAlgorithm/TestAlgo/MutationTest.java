@@ -7,10 +7,10 @@ import Main.VRP.GeneticAlgorithm.GeneticAlgorithm;
 import Main.VRP.GeneticAlgorithm.PopulationInitiator;
 import Main.VRP.GeneticAlgorithm.TotalCostCalculator;
 import Main.VRP.Individual.Individual;
-import Main.VRP.Individual.MutationOperators.InsertionMutation;
-import Main.VRP.Individual.MutationOperators.InsertionMutationGreedy;
+import Main.VRP.Individual.MutationOperators.IntraRouteRandomInsertion;
+import Main.VRP.Individual.MutationOperators.IntraRouteGreedyInsertion;
 import Main.VRP.Individual.MutationOperators.MutatePeriodAssignment;
-import Main.VRP.Individual.MutationOperators.MutateVehicleAssignmentGreedy;
+import Main.VRP.Individual.MutationOperators.GreedyVehicleReAssignment;
 
 
 public class MutationTest  implements GeneticAlgorithm

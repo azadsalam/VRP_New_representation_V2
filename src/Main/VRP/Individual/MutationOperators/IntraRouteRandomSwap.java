@@ -4,7 +4,7 @@ import Main.Utility;
 import Main.VRP.ProblemInstance;
 import Main.VRP.Individual.Individual;
 
-public class SwapMutation {
+public class IntraRouteRandomSwap {
 
 	public static void mutate(Individual individual)
 	{
