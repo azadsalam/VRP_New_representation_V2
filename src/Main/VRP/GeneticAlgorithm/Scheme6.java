@@ -68,7 +68,7 @@ public class Scheme6 implements GeneticAlgorithm
 	    fussSelection = new FUSS();
 		survivalSelectionOperator = new FUSS(); 
 
-		localSearch = new FirstChoiceHillClimbing();
+		localSearch = new SimulatedAnnealing();
 		localImprovement = new LocalImprovementBasedOnFussandElititst(loadPenaltyFactor, routeTimePenaltyFactor, localSearch, POPULATION_SIZE);	
 	}
 
@@ -260,7 +260,7 @@ public class Scheme6 implements GeneticAlgorithm
 				for(int tmpi=0;tmpi<POPULATION_SIZE;tmpi++)
 					tmpSum += population[tmpi].costWithPenalty;
 				
-				System.out.println("Gen : "+ generation + " Best : "+population[0].costWithPenalty+" Avg : "+(tmpSum/POPULATION_SIZE));
+				System.out.println("Gen : "+ generation + " Best : "+population[0].costWithPenalty+  " Feasibility : "+ population[0].isFeasible +" Avg : "+(tmpSum/POPULATION_SIZE));
 			}
 			
 			

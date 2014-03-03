@@ -61,7 +61,6 @@ public class OneZeroExchange
 		
 		ArrayList<Integer> route = individual.routes.get(period).get(vehicle);
 		newInfo= RouteUtilities.minimumCostInsertionPosition(individual.problemInstance, vehicle, client, route);
-		
 				
 		//individual.problemInstance.out.println("Period : "+period+" vehicle : "+vehicle+" selected Client : "+selectedClient+" "+ " new Position : "+newIndex);
 		

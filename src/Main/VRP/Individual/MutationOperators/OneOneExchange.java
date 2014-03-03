@@ -16,7 +16,7 @@ public class OneOneExchange
 	
 	/**
 	 * Randomly selects 2 clients in a period 
-	 * <br/> Inserts those clients  in two random routes with minimum cost increase heuristics
+	 * <br/> swap their routes with minimum cost increase heuristics
 	 * <br/> 
 	 * <br/>  
 	 * @param individual
@@ -52,7 +52,6 @@ public class OneOneExchange
 		MinimumCostInsertionInfo newInfo;
 		min.cost=9999999;
 		
-		//ei test er kono dorkar nai.. vehicle count 2 er kom hole ei operator call korar kono mane e nai
  			
 		ArrayList<Integer> route1 = individual.routes.get(period).get(vehicle1);
 		ArrayList<Integer> route2 = individual.routes.get(period).get(vehicle2);

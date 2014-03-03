@@ -11,13 +11,15 @@ import Main.VRP.Individual.MutationOperators.IntraRouteRandomInsertion;
 import Main.VRP.Individual.MutationOperators.IntraRouteGreedyInsertion;
 import Main.VRP.Individual.MutationOperators.MutatePeriodAssignment;
 import Main.VRP.Individual.MutationOperators.GreedyVehicleReAssignment;
+import Main.VRP.Individual.MutationOperators.Or_Opt;
+import Main.VRP.Individual.MutationOperators.Three_Opt;
 
 
 public class MutationTest  implements GeneticAlgorithm
 {
 	PrintWriter out; 
 	
-	int POPULATION_SIZE = 1000;
+	int POPULATION_SIZE = 10;
 	int NUMBER_OF_OFFSPRING = 10;
 	int NUMBER_OF_GENERATION = 1;
 	
@@ -86,23 +88,26 @@ public class MutationTest  implements GeneticAlgorithm
 			}
 		}
 		
-		for(int pop = 0; pop<POPULATION_SIZE;pop++)
+		int pop=0;
+		//for( pop = 0; pop<POPULATION_SIZE;pop++)
 		{
 		
 			
-			
+
+			problemInstance.out.println("BEFORE : ");
+			population[pop].print();
+			System.out.print("Before Mutation : Cost - "+population[pop].cost+" with  Penalty"+population[pop].costWithPenalty);
 			if(population[pop].validationTest())
 			{
 				//System.out.print(" Valid\n\n");
 			}
 			else 
 			{
-				problemInstance.out.println("BEFORE : ");
-				population[pop].print();
-				System.out.print("Before Mutation : Cost - "+population[pop].cost+" with  Penalty"+population[pop].costWithPenalty);
 				System.err.print(" INVALID\n\n");
 			}
 			
+			
+			Three_Opt.mutateRandomRoute(population[0]);
 			//InsertionMutationGreedy.mutate(population[0]);
 			
 			//MutatePeriodAssignment.mutatePeriodAssignment(population[pop]);
@@ -111,20 +116,23 @@ public class MutationTest  implements GeneticAlgorithm
 			//InsertionMutation.mutateRouteWithInsertion(population[pop]);
 			
 			//InsertionMutationGreedy.mutate(population[pop]);
-			population[0].calculateCostAndPenalty();
+//			population[0].calculateCostAndPenalty();
+			TotalCostCalculator.calculateCost(population[0], loadPenaltyFactor, routeTimePenaltyFactor);
 			
-			
+			problemInstance.out.println("After : ");
+			population[0].print();
+			System.out.println("\nAfter Mutation : Cost - "+population[pop].cost+" with  Penalty"+population[pop].costWithPenalty);
 			if(population[pop].validationTest())
 			{
 				//System.out.print(" Valid\n\n");
 			}
 			else
 			{
-				problemInstance.out.println("After : ");
-				population[pop].print();
-				System.out.print("After Mutation : Cost - "+population[pop].cost+" with  Penalty"+population[pop].costWithPenalty);
+			
 				System.err.print(" INVALID\n\n");
 			}
+			out.flush();
+			
 
 		}
 		return population[0];

@@ -12,7 +12,7 @@ public class PopulationInitiator
 {
 	public static void initialisePopulation(Individual[] population,int populationSize,ProblemInstance problemInstance)
 	{
-		//	out.print("Initial population : \n");
+		//out.print("Initial population : \n");
 		for(int i=0; i<populationSize; i++)
 		{
 			population[i] = new Individual(problemInstance);

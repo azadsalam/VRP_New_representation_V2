@@ -6,6 +6,7 @@ import java.util.Random;
 import Main.VRP.GeneticAlgorithm.Mutation;
 import Main.VRP.GeneticAlgorithm.TotalCostCalculator;
 import Main.VRP.Individual.Individual;
+import Main.VRP.Individual.MutationOperators.Three_Opt;
 
 
 /**
@@ -101,6 +102,7 @@ public class SimulatedAnnealing  extends LocalSearch
 	            
             }while(true);
 
+            Three_Opt.onAllROute(current);
             //System.out.println("Before - After : "+initialNode.costWithPenalty + " "+current.costWithPenalty);
             if(initialNode.costWithPenalty>current.costWithPenalty)
             	initialNode.copyIndividual(current);
@@ -134,6 +136,7 @@ public class SimulatedAnnealing  extends LocalSearch
 		{
 			
 			mutation.applyMutation(offspring);
+//			Three_Opt.onAllROute(offspring);
 //			offspring.calculateCostAndPenalty();
 
 		}
