@@ -24,7 +24,7 @@ public class Scheme6 implements GeneticAlgorithm
 	//Algorithm parameters
 	public static int POPULATION_SIZE = 100; 
 	public static int NUMBER_OF_OFFSPRING = 100;   
-	public static int NUMBER_OF_GENERATION = 100;
+	public static int NUMBER_OF_GENERATION = 200;
 	public static double loadPenaltyFactor = 10;
 	public static double routeTimePenaltyFactor = 10;
 
@@ -66,7 +66,7 @@ public class Scheme6 implements GeneticAlgorithm
 		//Add additional code here
 		rouletteWheelSelection = new RoutletteWheelSelection();
 	    fussSelection = new FUSS();
-		survivalSelectionOperator = new FUSS(); 
+		survivalSelectionOperator = new RoutletteWheelSelection(); 
 
 		localSearch = new SimulatedAnnealing();
 		localImprovement = new LocalImprovementBasedOnFussandElititst(loadPenaltyFactor, routeTimePenaltyFactor, localSearch, POPULATION_SIZE);	

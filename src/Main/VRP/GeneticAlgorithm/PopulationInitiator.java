@@ -16,13 +16,15 @@ public class PopulationInitiator
 		for(int i=0; i<populationSize; i++)
 		{
 			population[i] = new Individual(problemInstance);
+			
 			if(i%5 == 0)
 				RandomInitialisation.initialiseRandom(population[i]);
-			else if(i%5 == 1)
+			else if(i%4 == 1)
 				Initialise_ClosestDepot_UniformCut.initiialise(population[i]);
 			else 
 				//Initialise_ClosestDepot_GreedyCut.initialise(population[i]);
 				Initialise_ClosestDepot_withNoLoadViolation_Uniform_cut.initiialise(population[i]);
+			
 			//problemInstance.out.println("Printing individual "+ i +" : \n");
 			//population[i].print();
 		}

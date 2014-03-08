@@ -3,6 +3,7 @@ package Main.VRP.LocalImprovement;
 import Main.VRP.GeneticAlgorithm.Mutation;
 import Main.VRP.GeneticAlgorithm.TotalCostCalculator;
 import Main.VRP.Individual.Individual;
+import Main.VRP.Individual.MutationOperators.Three_Opt;
 
 
 public class FirstChoiceHillClimbing extends LocalSearch {
@@ -25,7 +26,7 @@ public class FirstChoiceHillClimbing extends LocalSearch {
 		Individual node,neighbour;
 		node = new Individual(initialNode);
 		
-		while(retry<5)
+		while(retry<7)
 		{			
 			neighbour = new Individual(node);
 			applyMutation(neighbour);
@@ -43,7 +44,7 @@ public class FirstChoiceHillClimbing extends LocalSearch {
 			}
 		}
 		
-		
+        Three_Opt.onAllROute(node);
 		initialNode.copyIndividual(node);
 		
 	}

@@ -26,7 +26,7 @@ public class Solver
 	public static boolean showViz=false;
 	public static boolean printProblemInstance= false;
 	public static boolean onTest=false;
-	String singleInputFileName = "benchmark/MDPVRP/pr10";
+	String singleInputFileName = "benchmark/MDPVRP/pr05";
 	String singleOutputFileName = "benchmark/MDPVRP/out.txt";
 	String timeStamp = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss").format(Calendar.getInstance().getTime());
 	

@@ -102,7 +102,7 @@ public class SimulatedAnnealing  extends LocalSearch
 	            
             }while(true);
 
-            Three_Opt.onAllROute(current);
+            //Three_Opt.onAllROute(current);
             //System.out.println("Before - After : "+initialNode.costWithPenalty + " "+current.costWithPenalty);
             if(initialNode.costWithPenalty>current.costWithPenalty)
             	initialNode.copyIndividual(current);
