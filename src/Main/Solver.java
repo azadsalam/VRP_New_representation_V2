@@ -13,6 +13,8 @@ import Main.VRP.ProblemInstance;
 import Main.VRP.GeneticAlgorithm.GeneticAlgorithm;
 import Main.VRP.GeneticAlgorithm.Scheme6;
 import Main.VRP.GeneticAlgorithm.Scheme6_With_Binary_Tournament;
+import Main.VRP.GeneticAlgorithm.Scheme6_with_weighted_mutation;
+import Main.VRP.GeneticAlgorithm.TotalCostCalculator;
 import Main.VRP.GeneticAlgorithm.TestAlgo.MutationTest;
 import Main.VRP.GeneticAlgorithm.TestAlgo.TestAlgo;
 import Main.VRP.GeneticAlgorithm.TestAlgo.TestDistance;
@@ -22,23 +24,34 @@ import Main.VRP.Individual.Individual;
 
 public class Solver 
 {
+	static public int numberOfmutationOperator=9;
+	static public int episodeSize = 5;
+	public static double loadPenaltyFactor = 10;
+	public static double routeTimePenaltyFactor = 10;
 	static public Visualiser visualiser;
 	public static boolean showViz=false;
 	public static boolean printProblemInstance= false;
 	public static boolean onTest=false;
-	String singleInputFileName = "benchmark/MDPVRP/pr05";
+	String singleInputFileName = "benchmark/MDPVRP/pr03";
 	String singleOutputFileName = "benchmark/MDPVRP/out.txt";
 	String timeStamp = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss").format(Calendar.getInstance().getTime());
 	
 	String reportFileName = "reports/report_"+timeStamp+".csv"; 
 	//String[] instanceFiles={"benchmark/PVRP/p01"};
-	String[] instanceFiles={"benchmark/PVRP/p01","benchmark/PVRP/p13","benchmark/PVRP/p32","benchmark/PVRP/pr06","benchmark/PVRP/pr10"
+	/*String[] instanceFiles={"benchmark/PVRP/p01","benchmark/PVRP/p13","benchmark/PVRP/p32","benchmark/PVRP/pr06","benchmark/PVRP/pr10"
 			,"benchmark/MDVRP/p01","benchmark/MDVRP/p14","benchmark/MDVRP/p23","benchmark/MDVRP/pr01","benchmark/MDVRP/pr05","benchmark/MDVRP/pr10"
 			,"benchmark/MDPVRP/pr03","benchmark/MDPVRP/pr07","benchmark/MDPVRP/pr10"};
 	
+	*/
 	
+	//All mdpvrp
+	String[] instanceFiles={"benchmark/MDPVRP/pr01","benchmark/MDPVRP/pr02","benchmark/MDPVRP/pr03"
+			,"benchmark/MDPVRP/pr04","benchmark/MDPVRP/pr05","benchmark/MDPVRP/pr06"
+			,"benchmark/MDPVRP/pr07","benchmark/MDPVRP/pr08","benchmark/MDPVRP/pr09"
+			,"benchmark/MDPVRP/pr10"
+			};
 	int runSize=3;
-	public static boolean singleRun = true;
+	public static boolean singleRun = false;
 	
 	File inputFile,outputFile;	
 	Scanner input;
@@ -82,6 +95,7 @@ public class Solver
 				//output.println("Test cases (Now ignored): "+ testCases);
 				//output.flush();
 				problemInstance = new ProblemInstance(input,output);
+				if(problemInstance.periodCount==1) numberOfmutationOperator--;
 			}
 		}
 		catch (FileNotFoundException e)
@@ -128,7 +142,7 @@ public class Solver
 
 			GeneticAlgorithm ga;
 			if(!onTest)
-				ga = new Scheme6(problemInstance);		
+				ga = new Scheme6_with_weighted_mutation(problemInstance);		
 			else
 				ga = new MutationTest(problemInstance);
 			Solver.exportToCsv.init(ga.getNumberOfGeeration()+1);	
@@ -212,13 +226,13 @@ public class Solver
 		{
 			ProblemInstance problemInstance = createProblemInstance(instanceFiles[instanceNo], singleOutputFileName);
 			
-			Scheme6_With_Binary_Tournament ga = new Scheme6_With_Binary_Tournament(problemInstance);
+			Scheme6_with_weighted_mutation ga = new Scheme6_with_weighted_mutation(problemInstance);
 			
 			if(once)
 			{
 				once=false;
 				reportOut.format("Number Of Generation, Population Size, Offspring Population Size, LoadPenalty, RouteTime Penalty\n");
-				reportOut.format("%d, %d, %d, %f, %f\n",ga.NUMBER_OF_GENERATION,ga.POPULATION_SIZE,ga.NUMBER_OF_OFFSPRING,ga.loadPenaltyFactor,ga.routeTimePenaltyFactor );
+				reportOut.format("%d, %d, %d, %f, %f\n",ga.NUMBER_OF_GENERATION,ga.POPULATION_SIZE,ga.NUMBER_OF_OFFSPRING,loadPenaltyFactor,routeTimePenaltyFactor);
 				reportOut.println();
 				
 				reportOut.println();
@@ -241,8 +255,8 @@ public class Solver
 					feasibleCount++;
 				}
 				sum += sol.costWithPenalty;
-				if(sol.cost>max) max = sol.costWithPenalty;
-				if(sol.cost<min) min = sol.costWithPenalty;
+				if(sol.costWithPenalty>max) max = sol.costWithPenalty;
+				if(sol.costWithPenalty<min) min = sol.costWithPenalty;
 				
 					
 			}

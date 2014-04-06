@@ -19,7 +19,7 @@ public class PopulationInitiator
 			
 			if(i%5 == 0)
 				RandomInitialisation.initialiseRandom(population[i]);
-			else if(i%4 == 1)
+			else if(i%5 == 1)
 				Initialise_ClosestDepot_UniformCut.initiialise(population[i]);
 			else 
 				//Initialise_ClosestDepot_GreedyCut.initialise(population[i]);

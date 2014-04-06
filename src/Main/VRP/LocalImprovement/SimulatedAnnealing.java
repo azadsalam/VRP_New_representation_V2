@@ -4,8 +4,10 @@ package Main.VRP.LocalImprovement;
 import java.util.Random;
 
 import Main.VRP.GeneticAlgorithm.Mutation;
+import Main.VRP.GeneticAlgorithm.MutationWithWeightingScheme;
 import Main.VRP.GeneticAlgorithm.TotalCostCalculator;
 import Main.VRP.Individual.Individual;
+import Main.VRP.Individual.MutationOperators.MutationInterface;
 import Main.VRP.Individual.MutationOperators.Three_Opt;
 
 
@@ -43,7 +45,7 @@ public class SimulatedAnnealing  extends LocalSearch
 
         private Scheduler scheduler;
         private Random rand;
-        private Mutation mutation;
+        private MutationInterface mutation;
 
         /**
          * Constructs a simulated annealing search from the specified heuristic
@@ -56,10 +58,18 @@ public class SimulatedAnnealing  extends LocalSearch
         {         
         	scheduler = new Scheduler();
         	rand = new Random();
-        	mutation = new Mutation();
+        	mutation = new MutationWithWeightingScheme();
         }
 
+        
+        public SimulatedAnnealing(MutationInterface mutat) 
+        {         
+        	scheduler = new Scheduler();
+        	rand = new Random();
+        	mutation = mutat;
+        }
 
+        
 
     	@Override
     	public void improve(Individual initialNode, double loadPenaltyFactor, double routeTimePenaltyFactor) 

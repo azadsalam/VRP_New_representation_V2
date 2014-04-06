@@ -9,6 +9,7 @@ import Main.VRP.Individual.Individual;
 import Main.VRP.Individual.Initialise_ClosestDepot_GreedyCut;
 import Main.VRP.Individual.Crossover.Crossover_Uniform_Uniform;
 import Main.VRP.Individual.Crossover.Uniform_VariedEdgeRecombnation_Crossover;
+import Main.VRP.Individual.MutationOperators.MutationInterface;
 import Main.VRP.LocalImprovement.FirstChoiceHillClimbing;
 import Main.VRP.LocalImprovement.LocalImprovement;
 import Main.VRP.LocalImprovement.LocalImprovementBasedOnFussandElititst;
@@ -19,14 +20,12 @@ import Main.VRP.SelectionOperator.RoutletteWheelSelection;
 import Main.VRP.SelectionOperator.SelectionOperator;
 
 
-public class Scheme6 implements GeneticAlgorithm
+public class Scheme6_with_weighted_mutation implements GeneticAlgorithm
 {
 	//Algorithm parameters
 	public static int POPULATION_SIZE = 100; 
 	public static int NUMBER_OF_OFFSPRING = 100;   
 	public static int NUMBER_OF_GENERATION = 500;
-	public static double loadPenaltyFactor = 10;
-	public static double routeTimePenaltyFactor = 10;
 
 	//Algorithm data structures
 	Individual population[];
@@ -34,7 +33,7 @@ public class Scheme6 implements GeneticAlgorithm
 	Individual parentOffspringTotalPopulation[];
 
 	//Operators
-	Mutation mutation;
+	MutationInterface mutationWithWeightingScheme;
     SelectionOperator rouletteWheelSelection;
     SelectionOperator fussSelection;
     SelectionOperator survivalSelectionOperator;
@@ -50,13 +49,13 @@ public class Scheme6 implements GeneticAlgorithm
 	
 
 	
-	public Scheme6(ProblemInstance problemInstance) 
+	public Scheme6_with_weighted_mutation(ProblemInstance problemInstance) 
 	{
 		// TODO Auto-generated constructor stub
 		this.problemInstance = problemInstance;
 		out = problemInstance.out;
 
-		mutation = new Mutation();
+		mutationWithWeightingScheme = new MutationWithWeightingScheme();
 		
 		//Change here if needed
 		population = new Individual[POPULATION_SIZE];
@@ -68,8 +67,8 @@ public class Scheme6 implements GeneticAlgorithm
 	    fussSelection = new FUSS();
 		survivalSelectionOperator = new RoutletteWheelSelection(); 
 
-		localSearch = new SimulatedAnnealing();
-		localImprovement = new LocalImprovementBasedOnFussandElititst(loadPenaltyFactor, routeTimePenaltyFactor, localSearch, POPULATION_SIZE);	
+		localSearch = new SimulatedAnnealing(mutationWithWeightingScheme);
+		localImprovement = new LocalImprovementBasedOnFussandElititst(Solver.loadPenaltyFactor, Solver.routeTimePenaltyFactor, localSearch, POPULATION_SIZE);	
 	}
 
 	public Individual run() 
@@ -81,7 +80,7 @@ public class Scheme6 implements GeneticAlgorithm
 		Individual.calculateAssignmentProbalityForDiefferentDepot(problemInstance);
 		Individual.calculateProbalityForDiefferentVehicle(problemInstance);
 		PopulationInitiator.initialisePopulation(population, POPULATION_SIZE, problemInstance);
-		TotalCostCalculator.calculateCostofPopulation(population,0, POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor) ;
+		TotalCostCalculator.calculateCostofPopulation(population,0, POPULATION_SIZE, Solver.loadPenaltyFactor, Solver.routeTimePenaltyFactor) ;
 		
 		
 		int continuosInjection=0; 
@@ -94,10 +93,17 @@ public class Scheme6 implements GeneticAlgorithm
 		{
 			//For collecting min,max,avg
 			Solver.gatherExcelData(population, POPULATION_SIZE, generation);
-			TotalCostCalculator.calculateCostofPopulation(population,0, POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor) ;
+			TotalCostCalculator.calculateCostofPopulation(population,0, POPULATION_SIZE, Solver.loadPenaltyFactor, Solver.routeTimePenaltyFactor) ;
 			
 			//  Best individual always reproduces K=1 times + roulette wheel
 			
+			if(generation !=0 && generation%Solver.episodeSize==0)
+			{
+				//System.out.println("Generation : "+generation);				
+				mutationWithWeightingScheme.updateWeights();
+				//System.out.println();
+				//System.out.println();
+			}
 			
 			fussSelection.initialise(population, false);
 			rouletteWheelSelection.initialise(population, false);
@@ -116,7 +122,7 @@ public class Scheme6 implements GeneticAlgorithm
 			Uniform_VariedEdgeRecombnation_Crossover.crossOver_Uniform_VariedEdgeRecombination(problemInstance, parent1, parent2, offspring1);
 			
 			
-			//mutation.applyMutation(offspring1);
+			mutationWithWeightingScheme.applyMutation(offspring1);
 			
 			offspringPopulation[i] = offspring1;
 			i++;
@@ -134,7 +140,7 @@ public class Scheme6 implements GeneticAlgorithm
 				//Crossover_Uniform_Uniform.crossOver_Uniform_Uniform(problemInstance, parent1, parent2, offspring1, offspring2);	
 				Uniform_VariedEdgeRecombnation_Crossover.crossOver_Uniform_VariedEdgeRecombination(problemInstance, parent1, parent2, offspring1);
 				
-				//mutation.applyMutation(offspring1);
+				mutationWithWeightingScheme.applyMutation(offspring1);
 				//mutation.applyMutation(offspring2);
 				
 				offspringPopulation[i] = offspring1;
@@ -143,7 +149,7 @@ public class Scheme6 implements GeneticAlgorithm
 				i++;*/
 			}
 
-			TotalCostCalculator.calculateCostofPopulation(offspringPopulation, 0,NUMBER_OF_OFFSPRING, loadPenaltyFactor, routeTimePenaltyFactor) ;
+			TotalCostCalculator.calculateCostofPopulation(offspringPopulation, 0,NUMBER_OF_OFFSPRING, Solver.loadPenaltyFactor, Solver.routeTimePenaltyFactor) ;
 			Utility.concatPopulation(parentOffspringTotalPopulation, population, offspringPopulation);
 			
 			
@@ -163,7 +169,7 @@ public class Scheme6 implements GeneticAlgorithm
 			localImprovement.initialise(parentOffspringTotalPopulation);
 			localImprovement.run(parentOffspringTotalPopulation);
 			
-			TotalCostCalculator.calculateCostofPopulation(parentOffspringTotalPopulation, 0, POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor);
+			TotalCostCalculator.calculateCostofPopulation(parentOffspringTotalPopulation, 0, POPULATION_SIZE, Solver.loadPenaltyFactor, Solver.routeTimePenaltyFactor);
 			
 			//Preserving the k% best individual + FUSS approach, the n portion of best individuals always make to next generation
 			Utility.sort(parentOffspringTotalPopulation);
@@ -177,7 +183,7 @@ public class Scheme6 implements GeneticAlgorithm
 						parentOffspringTotalPopulation[p] = new Individual(problemInstance);
 						Initialise_ClosestDepot_GreedyCut.initialise(parentOffspringTotalPopulation[p]);
 						//.initialise_Closest_Depot_Greedy_Cut();
-						TotalCostCalculator.calculateCost(parentOffspringTotalPopulation[p], loadPenaltyFactor, routeTimePenaltyFactor);
+						TotalCostCalculator.calculateCost(parentOffspringTotalPopulation[p], Solver.loadPenaltyFactor, Solver.routeTimePenaltyFactor);
 						//parentOffspringTotalPopulation[p].calculateCostAndPenalty();
 						//System.out.println("DUPLICATE");
 					}
@@ -267,7 +273,7 @@ public class Scheme6 implements GeneticAlgorithm
 		}
 
 
-		TotalCostCalculator.calculateCostofPopulation(population,0,POPULATION_SIZE, loadPenaltyFactor, routeTimePenaltyFactor);
+		TotalCostCalculator.calculateCostofPopulation(population,0,POPULATION_SIZE, Solver.loadPenaltyFactor, Solver.routeTimePenaltyFactor);
 		Utility.sort(population);
 		Solver.gatherExcelData(population, POPULATION_SIZE, generation);
 		
