@@ -18,18 +18,17 @@ import Main.VRP.Individual.MutationOperators.Three_Opt;
 import Main.VRP.Individual.MutationOperators.Two_Opt;
 import Main.VRP.Individual.MutationOperators.*;
 
-public class MutationWithWeightingScheme implements MutationInterface
+public class MutationWithWeighting2 implements MutationInterface
 {	
 	double weights[],probabilities[];
 	double cumulativeProbability[];
 	int totalOperators;
 	
-	double oldRatio = 0.75;
-	double newRatio = 0.25;
+
 
 	int [] applicationCount;
 	double [] episodicImprovementRatio;
-	public MutationWithWeightingScheme()
+	public MutationWithWeighting2()
 	{
 		totalOperators=Solver.numberOfmutationOperator;
 		
@@ -54,6 +53,13 @@ public class MutationWithWeightingScheme implements MutationInterface
 		}
 	}
 	
+	public void printProbabilities() 
+	{
+	    System.out.print("Probabilities  : ");
+		for(int i=0;i<totalOperators;i++) 
+			System.out.print(probabilities[i]+" ");
+		System.out.println();		
+	}
 	private void initEpsiodicVariables() 
 	{
 		Arrays.fill(applicationCount, 0);
@@ -72,8 +78,8 @@ public class MutationWithWeightingScheme implements MutationInterface
 		for(int i=0;i<totalOperators;i++) 
 			System.out.print(weights[i]+" ");
 		System.out.println();
-*/		
 		
+	*/	
 		//UPDATE WEIGHT
 //		System.out.print("DEL Weights  : ");
 	    for(int i=0;i<totalOperators;i++)
@@ -85,7 +91,11 @@ public class MutationWithWeightingScheme implements MutationInterface
 	    	double avgImrpvementRatio = (episodicImprovementRatio[i] / applicationCount[i]);
 	    	
 //	    	System.out.print(avgImrpvementRatio+" ");
-	    	weights[i] = oldRatio * weights[i] + newRatio * avgImrpvementRatio;
+	    	//change here
+	    	
+	    	//weights[i] = oldRatio * weights[i] + newRatio * avgImrpvementRatio;
+	    	
+	    	weights[i] = (1+avgImrpvementRatio) * weights[i];
 	    }
 //		System.out.println();
 
@@ -93,9 +103,8 @@ public class MutationWithWeightingScheme implements MutationInterface
 /*	    System.out.print("Weights After : ");
 		for(int i=0;i<totalOperators;i++) 
 			System.out.print(weights[i]+" ");
-		System.out.println();
-*/		
-		
+		System.out.println();		
+	*/	
 	    updateProbabilities();
 		//INIT episodic variables
 		initEpsiodicVariables();
@@ -205,7 +214,7 @@ public class MutationWithWeightingScheme implements MutationInterface
 		if(newCost<oldCost)
 		{
 			double improvementRatio = (oldCost - newCost)/oldCost;
-			//System.out.println(improvementRatio+" is by operator "+appliedOperator);
+			//System.out.println(improvementRatio*100+" % - by operator "+appliedOperator);
 			episodicImprovementRatio[appliedOperator] += improvementRatio;
 			applicationCount[appliedOperator]++;
 			//System.out.println(appliedOperator+ " -> new count ->  "+ applicationCount[appliedOperator] );

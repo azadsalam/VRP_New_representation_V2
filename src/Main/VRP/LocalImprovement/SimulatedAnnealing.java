@@ -4,7 +4,7 @@ package Main.VRP.LocalImprovement;
 import java.util.Random;
 
 import Main.VRP.GeneticAlgorithm.Mutation;
-import Main.VRP.GeneticAlgorithm.MutationWithWeightingScheme;
+import Main.VRP.GeneticAlgorithm.MutationWithRewardBasedWeighting;
 import Main.VRP.GeneticAlgorithm.TotalCostCalculator;
 import Main.VRP.Individual.Individual;
 import Main.VRP.Individual.MutationOperators.MutationInterface;
@@ -58,7 +58,7 @@ public class SimulatedAnnealing  extends LocalSearch
         {         
         	scheduler = new Scheduler();
         	rand = new Random();
-        	mutation = new MutationWithWeightingScheme();
+        	mutation = new MutationWithRewardBasedWeighting();
         }
 
         

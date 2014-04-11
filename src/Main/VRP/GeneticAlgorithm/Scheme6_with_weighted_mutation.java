@@ -25,7 +25,7 @@ public class Scheme6_with_weighted_mutation implements GeneticAlgorithm
 	//Algorithm parameters
 	public static int POPULATION_SIZE = 100; 
 	public static int NUMBER_OF_OFFSPRING = 100;   
-	public static int NUMBER_OF_GENERATION = 500;
+	public static int NUMBER_OF_GENERATION = 50;
 
 	//Algorithm data structures
 	Individual population[];
@@ -55,7 +55,7 @@ public class Scheme6_with_weighted_mutation implements GeneticAlgorithm
 		this.problemInstance = problemInstance;
 		out = problemInstance.out;
 
-		mutationWithWeightingScheme = new MutationWithWeightingScheme();
+		mutationWithWeightingScheme = new MutationWithWeighting2();
 		
 		//Change here if needed
 		population = new Individual[POPULATION_SIZE];
@@ -288,7 +288,8 @@ public class Scheme6_with_weighted_mutation implements GeneticAlgorithm
 				population[i].print();
 			}
 		}
-		
+		System.out.println("Gen : "+ generation + " Best : "+population[0].costWithPenalty+  " Feasibility : "+ population[0].isFeasible);
+		mutationWithWeightingScheme.printProbabilities();
 		return population[0];
 
 	}

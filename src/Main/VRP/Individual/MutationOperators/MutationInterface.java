@@ -6,5 +6,5 @@ public interface MutationInterface {
 
 	public void updateWeights();
 	public void applyMutation(Individual offspring);
-
+	public void printProbabilities() ;
 }

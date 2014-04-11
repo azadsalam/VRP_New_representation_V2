@@ -32,7 +32,7 @@ public class Solver
 	public static boolean showViz=false;
 	public static boolean printProblemInstance= false;
 	public static boolean onTest=false;
-	String singleInputFileName = "benchmark/MDPVRP/pr03";
+	String singleInputFileName = "benchmark/MDPVRP/pr10";
 	String singleOutputFileName = "benchmark/MDPVRP/out.txt";
 	String timeStamp = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss").format(Calendar.getInstance().getTime());
 	
@@ -45,13 +45,15 @@ public class Solver
 	*/
 	
 	//All mdpvrp
-	String[] instanceFiles={"benchmark/MDPVRP/pr01","benchmark/MDPVRP/pr02","benchmark/MDPVRP/pr03"
+	/*String[] instanceFiles={"benchmark/MDPVRP/pr01","benchmark/MDPVRP/pr02","benchmark/MDPVRP/pr03"
 			,"benchmark/MDPVRP/pr04","benchmark/MDPVRP/pr05","benchmark/MDPVRP/pr06"
 			,"benchmark/MDPVRP/pr07","benchmark/MDPVRP/pr08","benchmark/MDPVRP/pr09"
 			,"benchmark/MDPVRP/pr10"
+			};*/
+	String[] instanceFiles={"benchmark/MDPVRP/pr10"
 			};
-	int runSize=3;
-	public static boolean singleRun = false;
+	int runSize=10;
+	public static boolean singleRun = true;
 	
 	File inputFile,outputFile;	
 	Scanner input;
@@ -142,7 +144,7 @@ public class Solver
 
 			GeneticAlgorithm ga;
 			if(!onTest)
-				ga = new Scheme6_with_weighted_mutation(problemInstance);		
+				ga = new Scheme6(problemInstance);		
 			else
 				ga = new MutationTest(problemInstance);
 			Solver.exportToCsv.init(ga.getNumberOfGeeration()+1);	
@@ -226,7 +228,7 @@ public class Solver
 		{
 			ProblemInstance problemInstance = createProblemInstance(instanceFiles[instanceNo], singleOutputFileName);
 			
-			Scheme6_with_weighted_mutation ga = new Scheme6_with_weighted_mutation(problemInstance);
+			Scheme6 ga = new Scheme6(problemInstance);
 			
 			if(once)
 			{

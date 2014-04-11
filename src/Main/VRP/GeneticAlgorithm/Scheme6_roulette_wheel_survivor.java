@@ -19,7 +19,7 @@ import Main.VRP.SelectionOperator.RoutletteWheelSelection;
 import Main.VRP.SelectionOperator.SelectionOperator;
 
 
-public class Scheme6 implements GeneticAlgorithm
+public class Scheme6_roulette_wheel_survivor implements GeneticAlgorithm
 {
 	//Algorithm parameters
 	public static int POPULATION_SIZE = 500; 
@@ -48,7 +48,7 @@ public class Scheme6 implements GeneticAlgorithm
 	//Temprary Variables
 	Individual parent1,parent2;	
 	
-	public Scheme6(ProblemInstance problemInstance) 
+	public Scheme6_roulette_wheel_survivor(ProblemInstance problemInstance) 
 	{
 		// TODO Auto-generated constructor stub
 		this.problemInstance = problemInstance;
@@ -64,7 +64,7 @@ public class Scheme6 implements GeneticAlgorithm
 		//Add additional code here
 		rouletteWheelSelection = new RoutletteWheelSelection();
 	    fussSelection = new FUSS();
-		survivalSelectionOperator = new FUSS(); 
+		survivalSelectionOperator = new RoutletteWheelSelection(); 
 
 		localSearch = new SimulatedAnnealing();
 		localImprovement = new LocalImprovementBasedOnFussandElititst(loadPenaltyFactor, routeTimePenaltyFactor, localSearch, POPULATION_SIZE);	
