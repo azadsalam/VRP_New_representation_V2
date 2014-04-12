@@ -5,6 +5,14 @@ import Main.Utility;
 import Main.VRP.Individual.Individual;
 import Main.VRP.Individual.RouteUtilities;
 
+
+/**
+ * Randomly selects a route (period, vehicle).
+ * The randomly selects a client in the route, removes it, and inserts it in the minimum cost increase position 
+ * <br/> retry <3
+ * <br/> Pure Random, Intra
+ * @author Azad
+ */
 public class IntraRouteGreedyInsertion 
 {
 	static int fail=0;

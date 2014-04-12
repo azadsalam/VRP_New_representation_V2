@@ -3,6 +3,14 @@ import java.util.ArrayList;
 import Main.Utility;
 import Main.VRP.Individual.Individual;
 
+
+/**
+ * Randomly selects a route (period, vehicle).
+ * The randomly selects a client in the route, removes it, and inserts it in a random position 
+ * <br/> retry <3
+ * <br/> Random + Greedy - Intra
+ * @author Azad
+ */
 public class IntraRouteRandomInsertion 
 {
 

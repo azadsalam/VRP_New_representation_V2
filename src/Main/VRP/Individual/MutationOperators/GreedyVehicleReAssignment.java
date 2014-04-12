@@ -6,15 +6,16 @@ import Main.VRP.Individual.Individual;
 import Main.VRP.Individual.MinimumCostInsertionInfo;
 import Main.VRP.Individual.RouteUtilities;
 
+/**
+ * Randomly selects a client,period 
+ * <br/>Inserts the client in the route, which cause minimum cost increase 
+ * @param individual
+ */
 public class GreedyVehicleReAssignment 
 {
 	static int fail=0;
 	
-	/**
-	 * Randomly selects a client,period 
-	 * <br/>Inserts the client in the route, which cause minimum cost increase 
-	 * @param individual
-	 */
+	
 	public static void mutate(Individual individual)
 	{
 		int retry = 0;

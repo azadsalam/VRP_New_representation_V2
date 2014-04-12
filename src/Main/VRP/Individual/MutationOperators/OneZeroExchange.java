@@ -6,18 +6,19 @@ import Main.VRP.Individual.Individual;
 import Main.VRP.Individual.MinimumCostInsertionInfo;
 import Main.VRP.Individual.RouteUtilities;
 
+/**
+ * Randomly selects a client,period 
+ * <br/> Inserts the client  in another random route with minimum cost increase heuristics
+ * <br/> Improvements can be done in selecting the other route..
+ * <br/> Like - we can select the order the routes according to avg distance from this client and assign this client to the  next/prev route 
+ * @param individual
+ */
 public class OneZeroExchange 
 {
 	static int fail=0;
 	//MDPVRP pr04 5530.768632709098
 	//MDPVRP pr06 7270.992149
-	/**
-	 * Randomly selects a client,period 
-	 * <br/> Inserts the client  in another random route with minimum cost increase heuristics
-	 * <br/> Improvements can be done in selecting the other route..
-	 * <br/> Like - we can select the order the routes according to avg distance from this client and assign this client to the  next/prev route 
-	 * @param individual
-	 */
+	
 	public static void mutate(Individual individual)
 	{
 		int retry = 0;

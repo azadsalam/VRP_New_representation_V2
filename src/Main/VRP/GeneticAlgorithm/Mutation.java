@@ -40,20 +40,20 @@ public class Mutation
 			IntraRouteGreedyInsertion.mutate(offspring);
 		}
 		else if (selectedMutationOperator == 1)
-		{			
-			//greedy //inter
-			GreedyVehicleReAssignment.mutate(offspring);
+		{
+			//random //intra
+			IntraRouteRandomInsertion.mutate(offspring);
 		}
 		else if (selectedMutationOperator == 2)
 		{
-			//random //inter
+			//random+greedy //inter
 			OneZeroExchange.mutate(offspring);
 //			offspring.mutateRouteWithInsertion();
 		}
 		else if (selectedMutationOperator == 3)
 		{
-			//random //intra
-			IntraRouteRandomInsertion.mutate(offspring);
+			//greedy //inter
+			GreedyVehicleReAssignment.mutate(offspring);
 		}
 		else if (selectedMutationOperator == 4)
 		{
